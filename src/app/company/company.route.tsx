@@ -10,6 +10,7 @@ import { JobSeekerList } from "./components/JobSeekerList"
 import { JobSeekerDetail } from "./components/JobSeekerDetail"
 import JobPostingRoute from "./job-posting/job-posting.route"
 import ApplicationsCompanyRoute from "./applications/applications.route"
+import { internshipCompanyRoutes } from "./internship/internship.route"
 
 export default function CompanyRoute() {
   return (
@@ -28,6 +29,7 @@ export default function CompanyRoute() {
             <Route path="/seekers/:id" element={<JobSeekerDetail />} />
             <Route path="/job-posting/*" element={<JobPostingRoute />} />
             <Route path="/applications/*" element={<ApplicationsCompanyRoute />} />
+            {internshipCompanyRoutes}
           </Routes>
         </div>
       </SidebarInset>

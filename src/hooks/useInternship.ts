@@ -1,0 +1,97 @@
+import { useCallback, useState } from 'react'
+import { internshipService, type IntershipCreatePayload, type IntershipResponse } from '@/services/internship.service'
+
+export const useInternshipCreate = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const createInternship = useCallback(async (data: IntershipCreatePayload) => {
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.create(data)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al crear pasantía'
+      setError(errorMessage)
+      throw error
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [])
+
+  return { createInternship, isSubmitting, error }
+}
+
+export const useInternshipDetail = () => {
+  const [internship, setInternship] = useState<IntershipResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchInternship = useCallback(async (id: string) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.getById(id)
+      setInternship(response.data)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al cargar pasantía'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { internship, isLoading, error, fetchInternship }
+}
+
+export const useInternshipListSeeker = () => {
+  const [internships, setInternships] = useState<IntershipResponse[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchMyInternships = useCallback(async (limit: number = 10, offset: number = 0) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.getMyInternships(limit, offset)
+      setInternships(response.data.data)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al cargar pasantías'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { internships, isLoading, error, fetchMyInternships }
+}
+
+export const useInternshipListCompany = () => {
+  const [internships, setInternships] = useState<IntershipResponse[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchCompanyInternships = useCallback(async (limit: number = 10, offset: number = 0) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.getCompanyInternships(limit, offset)
+      setInternships(response.data.data)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al cargar pasantías'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { internships, isLoading, error, fetchCompanyInternships }
+}

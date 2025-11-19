@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAcceptedApplications } from '@/hooks/useApplication'
+import { useInternshipCreate } from '@/hooks/useInternship'
 import { getStatusBadge } from '@/lib/applicationUtils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,8 +10,10 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 export function ApplicationAcceptedList() {
   const navigate = useNavigate()
   const { applications, isLoading, error, fetchAcceptedApplications } = useAcceptedApplications()
+  const { createInternship, isSubmitting: isCreatingInternship } = useInternshipCreate()
   const [page, setPage] = useState(0)
   const [expandedPostings, setExpandedPostings] = useState<Set<string>>(new Set())
+  const [convertingIds, setConvertingIds] = useState<Set<string>>(new Set())
 
   const limit = 10
 
@@ -28,6 +31,36 @@ export function ApplicationAcceptedList() {
       }
       return newSet
     })
+  }
+
+  const handleConvertToInternship = async (
+    applicationId: string,
+    jobPostingId: string,
+    jobSeekerProfileId: string
+  ) => {
+    try {
+      setConvertingIds((prev) => new Set([...prev, applicationId]))
+      const startDate = new Date()
+      const endDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+
+      await createInternship({
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString(),
+        job_posting_id: jobPostingId,
+        job_seeker_profile_id: jobSeekerProfileId,
+      })
+
+      // Reload the list
+      await fetchAcceptedApplications(limit, page * limit)
+    } catch (error) {
+      console.error('Error al crear pasantía:', error)
+    } finally {
+      setConvertingIds((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(applicationId)
+        return newSet
+      })
+    }
   }
 
   return (
@@ -82,7 +115,7 @@ export function ApplicationAcceptedList() {
                       <div className="space-y-3 mt-4">
                         {jobPosting.applications.map((app: any) => (
                           <div key={app.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                            <div className="flex justify-between items-start">
+                            <div className="flex justify-between items-start gap-4">
                               <div className="flex-1">
                                 <h4 className="font-semibold">{app.job_seeker?.name || 'Candidato'}</h4>
                                 <p className="text-sm text-muted-foreground">{app.job_seeker?.email}</p>
@@ -104,13 +137,29 @@ export function ApplicationAcceptedList() {
                                   Aceptada: {app.status_changed_at ? new Date(app.status_changed_at).toLocaleDateString() : new Date(app.created_at).toLocaleDateString()}
                                 </p>
                               </div>
-                              <Button
-                                onClick={() => navigate(`/company/applications/${app.id}`)}
-                                variant="default"
-                                size="sm"
-                              >
-                                Ver Detalle
-                              </Button>
+                              <div className="flex gap-2 flex-col">
+                                <Button
+                                  onClick={() => navigate(`/company/applications/${app.id}`)}
+                                  variant="default"
+                                  size="sm"
+                                >
+                                  Ver Detalle
+                                </Button>
+                                <Button
+                                  onClick={() =>
+                                    handleConvertToInternship(
+                                      app.id,
+                                      jobPosting.id,
+                                      app.job_seeker_id
+                                    )
+                                  }
+                                  variant="secondary"
+                                  size="sm"
+                                  disabled={isCreatingInternship || convertingIds.has(app.id)}
+                                >
+                                  {convertingIds.has(app.id) ? 'Convirtiendo...' : 'Convertir a Pasantía'}
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         ))}
