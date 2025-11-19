@@ -20,7 +20,8 @@ export function AssignTags() {
   const { fetchTags } = useGlobalTags()
   const { addTag, removeTag, isSubmitting } = useJobSeekerTags()
   const { fetchProfile } = useJobSeekerProfile()
-  const [proficiency, setProficiency] = useState<{ [key: string]: string }>({})
+  const [tempProficiency, setTempProficiency] = useState<string>('')
+  const [selectedTagId, setSelectedTagId] = useState<string | null>(null)
   const [page, setPage] = useState(0)
 
   const limit = 20
@@ -32,26 +33,29 @@ export function AssignTags() {
   }, [page, limit])
 
   // Mapear las tags asignadas desde jobSeeker.tags
-  const assignedTagIds = new Set(jobSeeker?.tags?.map((tag) => tag.global_tag.id) || [])
-  
-  // Mapear proficiency levels desde jobSeeker.tags
-  useEffect(() => {
-    if (jobSeeker?.tags) {
-      const newProficiency: { [key: string]: string } = {}
-      jobSeeker.tags.forEach((tag) => {
-        newProficiency[tag.global_tag.id] = tag.proficiency_level
-      })
-      setProficiency(newProficiency)
-    }
-  }, [jobSeeker?.tags])
+  const assignedTags = new Map(
+    jobSeeker?.tags?.map((tag) => [tag.global_tag.id, tag.proficiency_level]) || []
+  )
 
-  const handleAddTag = async (tagId: string) => {
+  const handleOpenProficiency = (tagId: string) => {
+    setSelectedTagId(tagId)
+    setTempProficiency('')
+  }
+
+  const handleConfirmAdd = async () => {
+    if (!selectedTagId || !tempProficiency) return
     try {
-      const prof = proficiency[tagId] || ''
-      await addTag(tagId, prof)
+      await addTag(selectedTagId, tempProficiency)
+      setSelectedTagId(null)
+      setTempProficiency('')
     } catch (error) {
       console.error('Error al agregar tag:', error)
     }
+  }
+
+  const handleCancelAdd = () => {
+    setSelectedTagId(null)
+    setTempProficiency('')
   }
 
   const handleRemoveTag = async (tagId: string) => {
@@ -94,46 +98,73 @@ export function AssignTags() {
         <>
           <div className="space-y-4">
             {tags.map((tag: GlobalTagResponse) => {
-              const isAssigned = assignedTagIds.has(tag.id)
+              const isAssigned = assignedTags.has(tag.id)
+              const isSelecting = selectedTagId === tag.id
               return (
-                <Card key={tag.id} className={isAssigned ? 'border-green-500 bg-green-50 dark:bg-green-950' : ''}>
+                <Card key={tag.id} className={isAssigned ? 'border-green-500 bg-green-50 dark:bg-green-950' : isSelecting ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : ''}>
                   <CardContent className="pt-6 flex justify-between items-center">
                     <div className="flex-1">
                       <p className="font-semibold">{tag.name}</p>
                       <p className="text-sm text-muted-foreground">{tag.category}</p>
 
                       {isAssigned && (
+                        <div className="mt-2">
+                          <p className="text-sm font-medium text-green-700 dark:text-green-200">
+                            Nivel: {assignedTags.get(tag.id)}
+                          </p>
+                        </div>
+                      )}
+
+                      {isSelecting && (
                         <div className="mt-3">
-                          <Select
-                            value={proficiency[tag.id] || ''}
-                            onValueChange={(value) =>
-                              setProficiency({ ...proficiency, [tag.id]: value })
-                            }
-                          >
+                          <Select value={tempProficiency} onValueChange={setTempProficiency}>
                             <SelectTrigger className="w-40">
                               <SelectValue placeholder="Seleccionar nivel" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Básico">Básico</SelectItem>
-                              <SelectItem value="Intermedio">Intermedio</SelectItem>
-                              <SelectItem value="Avanzado">Avanzado</SelectItem>
-                              <SelectItem value="Experto">Experto</SelectItem>
+                              <SelectItem value="intern">Intern</SelectItem>
+                              <SelectItem value="junior">Junior</SelectItem>
+                              <SelectItem value="semi-senior">Semi-senior</SelectItem>
+                              <SelectItem value="senior">Senior</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                       )}
                     </div>
 
-                    {!isAssigned ? (
+                    {!isAssigned && !isSelecting && (
                       <Button
-                        onClick={() => handleAddTag(tag.id)}
+                        onClick={() => handleOpenProficiency(tag.id)}
                         disabled={isSubmitting}
                         variant="default"
                         className="ml-4"
                       >
                         Agregar
                       </Button>
-                    ) : (
+                    )}
+
+                    {!isAssigned && isSelecting && (
+                      <div className="ml-4 flex gap-2">
+                        <Button
+                          onClick={handleConfirmAdd}
+                          disabled={!tempProficiency || isSubmitting}
+                          variant="default"
+                          size="sm"
+                        >
+                          Confirmar
+                        </Button>
+                        <Button
+                          onClick={handleCancelAdd}
+                          disabled={isSubmitting}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    )}
+
+                    {isAssigned && (
                       <Button
                         onClick={() => handleRemoveTag(tag.id)}
                         disabled={isSubmitting}

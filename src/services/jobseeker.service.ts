@@ -24,11 +24,15 @@ export const jobSeekerService = {
       params: { limit, offset },
     }),
 
+  // Endpoint para agregar tag - recibe tagId en la URL y proficiency en query
+  // Ruta: POST /job-seekers/{tagId}?proficiency=nivel
   addTag: (tagId: string, proficiency: string = '') =>
-    axiosInstance.post<JobSeekerResponse>(`/job-seekers/tags/${tagId}`, null, {
+    axiosInstance.post(`/job-seekers/${tagId}`, null, {
       params: { proficiency },
     }),
 
+  // Endpoint para remover tag - recibe tagId en la URL
+  // Ruta: DELETE /job-seekers/{tagId}
   removeTag: (tagId: string) =>
-    axiosInstance.delete<JobSeekerResponse>(`/job-seekers/tags/${tagId}`),
+    axiosInstance.delete(`/job-seekers/${tagId}`),
 }

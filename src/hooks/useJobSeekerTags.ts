@@ -36,7 +36,9 @@ export const useJobSeekerTags = () => {
       setError(null)
 
       try {
-        const response = await jobSeekerService.addTag(tagId, proficiency)
+        await jobSeekerService.addTag(tagId, proficiency)
+        // Después de agregar la tag, recargamos el jobSeeker para obtener los datos actualizados
+        const response = await jobSeekerService.getMe()
         setJobSeeker(response.data)
         return response.data
       } catch (error: any) {
@@ -56,7 +58,9 @@ export const useJobSeekerTags = () => {
       setError(null)
 
       try {
-        const response = await jobSeekerService.removeTag(tagId)
+        await jobSeekerService.removeTag(tagId)
+        // Después de remover la tag, recargamos el jobSeeker para obtener los datos actualizados
+        const response = await jobSeekerService.getMe()
         setJobSeeker(response.data)
         return response.data
       } catch (error: any) {
