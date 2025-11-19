@@ -11,6 +11,7 @@ import { JobSeekerDetail } from "./components/JobSeekerDetail"
 import JobPostingRoute from "./job-posting/job-posting.route"
 import ApplicationsCompanyRoute from "./applications/applications.route"
 import { internshipCompanyRoutes } from "./internship/internship.route"
+import { kpiCompanyRoutes } from "./kpi/kpi.route"
 
 export default function CompanyRoute() {
   return (
@@ -30,6 +31,7 @@ export default function CompanyRoute() {
             <Route path="/job-posting/*" element={<JobPostingRoute />} />
             <Route path="/applications/*" element={<ApplicationsCompanyRoute />} />
             {internshipCompanyRoutes}
+            {kpiCompanyRoutes}
           </Routes>
         </div>
       </SidebarInset>

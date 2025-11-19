@@ -46,9 +46,14 @@ export function InternshipDetailSeeker() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Detalle de Pasantía</h1>
-        <Button onClick={() => navigate('/jobseeker/internships')} variant="outline">
-          Volver
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => navigate(`/jobseeker/internships/${id}/kpis`)} variant="default">
+            Ver KPIs
+          </Button>
+          <Button onClick={() => navigate('/jobseeker/internships')} variant="outline">
+            Volver
+          </Button>
+        </div>
       </div>
 
       <Card>

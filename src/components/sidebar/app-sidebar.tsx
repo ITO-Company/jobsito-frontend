@@ -5,6 +5,7 @@ import {
   Tags,
   Bookmark,
   GraduationCap,
+  BarChart3,
 } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
@@ -68,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/jobseeker/internships",
       icon: GraduationCap,
       isActive: location.pathname.includes('/jobseeker/internships'),
-    },
+    }
   ]
 
   // Rutas para Company
@@ -102,6 +103,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/company/internships",
       icon: GraduationCap,
       isActive: location.pathname.includes('/company/internships'),
+    },
+    {
+      title: "KPI",
+      url: "/company/kpis",
+      icon: BarChart3,
+      isActive: location.pathname.includes('/company/kpis'),
     },
   ]
 

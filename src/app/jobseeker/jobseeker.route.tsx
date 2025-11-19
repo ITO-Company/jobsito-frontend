@@ -13,6 +13,7 @@ import JobPostingSeekerRoute from "./job-posting/job-posting.route"
 import ApplicationsSeekerRoute from "./applications/applications.route"
 import { SavedJobsRoute } from "./saved-jobs/saved-jobs.route"
 import InternshipSeekerRoute from "./internship/internship.route"
+import { kpiSeekerRoutes } from "./kpi/kpi.route"
 
 export default function JobSeekerRoute() {
   return (
@@ -34,6 +35,7 @@ export default function JobSeekerRoute() {
             <Route path="/applications/*" element={<ApplicationsSeekerRoute />} />
             <Route path="/saved-jobs/*" element={<SavedJobsRoute />} />
             <Route path="/internships/*" element={<InternshipSeekerRoute />} />
+            {kpiSeekerRoutes}
           </Routes>
         </div>
       </SidebarInset>
