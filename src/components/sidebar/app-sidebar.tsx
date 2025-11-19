@@ -3,6 +3,7 @@ import {
   Briefcase,
   Building2,
   Tags,
+  Bookmark,
 } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
@@ -48,6 +49,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/jobseeker/job-posting",
       icon: Tags,
       isActive: location.pathname.includes('/jobseeker/job-posting'),
+    },
+    {
+      title: "Trabajos Guardados",
+      url: "/jobseeker/saved-jobs",
+      icon: Bookmark,
+      isActive: location.pathname.includes('/jobseeker/saved-jobs'),
     },
     {
       title: "Mis Aplicaciones",

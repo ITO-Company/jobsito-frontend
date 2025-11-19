@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useJobPostingList } from '@/hooks/useJobPosting'
 import { useJobPostingStore } from '@/stores/jobposting.store'
+import { useSavedJobCreate } from '@/hooks/useSavedJob'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -9,13 +10,38 @@ export function JobPostingListSeeker() {
   const navigate = useNavigate()
   const { jobPostings, isLoading, error } = useJobPostingStore()
   const { fetchJobPostings } = useJobPostingList()
+  const { createSavedJob, isSubmitting } = useSavedJobCreate()
   const [page, setPage] = useState(0)
+  const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set())
+  const [saveMessages, setSaveMessages] = useState<Record<string, string>>({})
 
   const limit = 10
 
   useEffect(() => {
     fetchJobPostings(limit, page * limit)
   }, [page, limit])
+
+  const handleSaveJob = async (jobPostingId: string) => {
+    try {
+      await createSavedJob(jobPostingId)
+      setSavedJobIds((prev) => new Set([...prev, jobPostingId]))
+      setSaveMessages((prev) => ({ ...prev, [jobPostingId]: '✓ Guardado' }))
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => {
+        setSaveMessages((prev) => {
+          const newMessages = { ...prev }
+          delete newMessages[jobPostingId]
+          return newMessages
+        })
+      }, 3000)
+    } catch (error: any) {
+      // Si es error 409, marcar como ya guardado
+      if (error.response?.status === 409) {
+        setSavedJobIds((prev) => new Set([...prev, jobPostingId]))
+        setSaveMessages((prev) => ({ ...prev, [jobPostingId]: 'Ya guardado' }))
+      }
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -74,6 +100,13 @@ export function JobPostingListSeeker() {
                       className="ml-4"
                     >
                       Ver Oferta
+                    </Button>
+                    <Button
+                      onClick={() => handleSaveJob(job.id)}
+                      variant={savedJobIds.has(job.id) ? 'secondary' : 'outline'}
+                      disabled={isSubmitting || savedJobIds.has(job.id)}
+                    >
+                      {saveMessages[job.id] || (savedJobIds.has(job.id) ? 'Guardado' : 'Guardar')}
                     </Button>
                   </div>
                 </CardContent>
