@@ -2,6 +2,18 @@ import { useEffect } from 'react'
 import { useCompanyIssueKPI } from '@/hooks/useKPI'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, AlertCircle, Clock, Zap } from 'lucide-react'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 export function IssueKPICompany() {
   const { data, isLoading, error, fetch } = useCompanyIssueKPI()
@@ -79,6 +91,70 @@ export function IssueKPICompany() {
         })}
       </div>
 
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Pie Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Problemas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Resueltos', value: data.resolved_issues },
+                    { name: 'Activos', value: data.active_issues },
+                    { name: 'Pendientes', value: data.pending_issues },
+                    { name: 'Atrasados', value: data.overdue_issues },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {[0, 1, 2, 3].map((index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={['#10b981', '#f59e0b', '#6b7280', '#ef4444'][index]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Bar Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Estado de Problemas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[
+                  { name: 'Resueltos', value: data.resolved_issues },
+                  { name: 'Activos', value: data.active_issues },
+                  { name: 'Pendientes', value: data.pending_issues },
+                  { name: 'Atrasados', value: data.overdue_issues },
+                ]}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8b5cf6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Progress Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Resolution Rate */}
@@ -104,29 +180,6 @@ export function IssueKPICompany() {
           </CardContent>
         </Card>
 
-        {/* Overdue Percentage */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">% de Atrasados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold">{data.overdue_percentage.toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div
-                  className="bg-red-500 h-2 rounded-full transition-all"
-                  style={{ width: `${Math.min(data.overdue_percentage, 100)}%` }}
-                ></div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {data.overdue_issues} atrasados
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Issues with Requests */}
         <Card>
           <CardHeader>
@@ -136,36 +189,43 @@ export function IssueKPICompany() {
             <div className="space-y-4">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold">{data.issues_with_requests}</span>
+                <span className="text-sm text-muted-foreground">/ {data.total_issues}</span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="bg-blue-500 h-2 rounded-full transition-all"
-                  style={{ width: `${data.total_issues > 0 ? (data.issues_with_requests / data.total_issues) * 100 : 0}%` }}
+                  style={{
+                    width: `${data.total_issues > 0 ? (data.issues_with_requests / data.total_issues) * 100 : 0}%`,
+                  }}
                 ></div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Problemas con solicitudes asociadas
+                Problemas con solicitudes de ayuda
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Average Resolution Time */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Tiempo Promedio</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold">
+                  {data.average_resolution_time_days.toFixed(1)}
+                </span>
+                <span className="text-sm text-muted-foreground">días</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Promedio de resolución
               </p>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Average Resolution Time */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Tiempo Promedio de Resolución</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <span className="text-4xl font-bold">{data.average_resolution_time_days.toFixed(1)}</span>
-            <span className="text-lg text-muted-foreground">días</span>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Promedio de tiempo para resolver problemas
-          </p>
-        </CardContent>
-      </Card>
     </div>
   )
 }

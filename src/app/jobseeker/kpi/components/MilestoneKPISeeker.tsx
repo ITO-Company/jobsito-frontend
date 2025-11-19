@@ -2,6 +2,18 @@ import { useEffect } from 'react'
 import { useIntershipMilestoneKPI } from '@/hooks/useKPI'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, Clock, AlertCircle, Target } from 'lucide-react'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 interface MilestoneKPISeekerProps {
   intershipId: string
@@ -81,6 +93,67 @@ export function MilestoneKPISeeker({ intershipId }: MilestoneKPISeekerProps) {
             </Card>
           )
         })}
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Pie Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Hitos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Completados', value: data.completed_milestones },
+                    { name: 'Activos', value: data.active_milestones },
+                    { name: 'Pendientes', value: data.pending_milestones },
+                    { name: 'Atrasados', value: data.overdue_milestones },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {[0, 1, 2, 3].map((index) => (
+                    <Cell key={`cell-${index}`} fill={['#10b981', '#f59e0b', '#6b7280', '#ef4444'][index]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Bar Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Estado de Hitos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[
+                  { name: 'Completados', value: data.completed_milestones },
+                  { name: 'Activos', value: data.active_milestones },
+                  { name: 'Pendientes', value: data.pending_milestones },
+                  { name: 'Atrasados', value: data.overdue_milestones },
+                ]}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Progress Metrics */}

@@ -2,6 +2,21 @@ import { useEffect } from 'react'
 import { useCompanyMilestoneKPI } from '@/hooks/useKPI'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, Clock, AlertCircle, Target } from 'lucide-react'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from 'recharts'
 
 export function MilestoneKPICompany() {
   const { data, isLoading, error, fetch } = useCompanyMilestoneKPI()
@@ -53,6 +68,36 @@ export function MilestoneKPICompany() {
     },
   ]
 
+  // Data for pie chart
+  const pieData = [
+    { name: 'Completados', value: data.completed_milestones },
+    { name: 'Activos', value: data.active_milestones },
+    { name: 'Pendientes', value: data.pending_milestones },
+    { name: 'Atrasados', value: data.overdue_milestones },
+  ]
+
+  // Data for bar chart
+  const barData = [
+    {
+      name: 'Completados',
+      value: data.completed_milestones,
+    },
+    {
+      name: 'Activos',
+      value: data.active_milestones,
+    },
+    {
+      name: 'Pendientes',
+      value: data.pending_milestones,
+    },
+    {
+      name: 'Atrasados',
+      value: data.overdue_milestones,
+    },
+  ]
+
+  const COLORS = ['#10b981', '#f59e0b', '#6b7280', '#ef4444']
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">KPIs de Hitos</h2>
@@ -77,6 +122,55 @@ export function MilestoneKPICompany() {
             </Card>
           )
         })}
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Pie Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Hitos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Bar Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Estado de Hitos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={barData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Progress Metrics */}
