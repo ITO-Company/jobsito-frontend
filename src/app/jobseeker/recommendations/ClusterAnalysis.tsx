@@ -86,42 +86,50 @@ export function ClusterAnalysis() {
 
                   <div>
                     <h3 className="font-semibold text-lg mb-3">Miembros del Cluster</h3>
-                    <div className="space-y-2 max-h-96 overflow-y-auto">
-                      {cluster.members.map((member) => (
-                        <div
-                          key={member.jobseeker_id}
-                          className={`p-3 rounded-lg border-2 ${
-                            member.is_center ? "border-blue-600 bg-blue-50" : "border-gray-200 bg-white"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <p className="font-semibold flex items-center gap-2">
-                                {member.is_center && (
-                                  <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">Tú</span>
-                                )}
-                                {member.name}
-                              </p>
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {member.skills.map((skill) => (
-                                  <span key={skill} className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
-                                    {skill}
-                                  </span>
-                                ))}
-                              </div>
-                              <div className="text-xs text-gray-600 mt-2 space-y-1">
-                                <p>
-                                  <strong>Experiencia:</strong> {member.experience}
+                    {cluster.members && cluster.members.length > 0 ? (
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {cluster.members.map((member) => (
+                          <div
+                            key={member.jobseeker_id}
+                            className={`p-3 rounded-lg border-2 ${
+                              member.is_center ? "border-blue-600 bg-blue-50" : "border-gray-200 bg-white"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <p className="font-semibold flex items-center gap-2">
+                                  {member.is_center && (
+                                    <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">Tú</span>
+                                  )}
+                                  {member.name}
                                 </p>
-                                <p>
-                                  <strong>Salario esperado:</strong> {member.salary_range}
-                                </p>
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {member.skills && member.skills.length > 0 ? (
+                                    member.skills.map((skill) => (
+                                      <span key={skill} className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
+                                        {skill}
+                                      </span>
+                                    ))
+                                  ) : (
+                                    <span className="text-xs text-gray-500 italic">Sin skills registrados</span>
+                                  )}
+                                </div>
+                                <div className="text-xs text-gray-600 mt-2 space-y-1">
+                                  <p>
+                                    <strong>Experiencia:</strong> {member.experience}
+                                  </p>
+                                  <p>
+                                    <strong>Salario esperado:</strong> {member.salary_range}
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">Sin miembros en este cluster</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

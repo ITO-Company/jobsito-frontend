@@ -160,11 +160,12 @@ export interface SimilarCandidatesResponse {
   count: number;
 }
 
-export async function getSimilarCandidates(jobseekerId: string, topN: number = 5): Promise<SimilarCandidatesResponse> {
+export async function getSimilarCandidates(jobseekerId: string, topN: number = 10): Promise<SimilarCandidatesResponse> {
   try {
     const response = await mlAxios.get<SimilarCandidatesResponse>(
       `clustering/similar-candidates/${jobseekerId}?top_n=${topN}`
     );
+    console.log("Response clustering:😅😅", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching similar candidates:", error);
