@@ -1,61 +1,51 @@
-import { useSignin } from '@/hooks/useAuth'
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useSignin } from "@/hooks/useAuth";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function SigninForm() {
-  const navigate = useNavigate()
-  const [role, setRole] = useState<'job_seeker' | 'company'>('job_seeker')
-  const { form, onSubmit } = useSignin(role)
-  const { handleSubmit, formState: { isSubmitting } } = form
+  const navigate = useNavigate();
+  const [role, setRole] = useState<"job_seeker" | "company">("job_seeker");
+  const { form, onSubmit } = useSignin(role);
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form;
 
   const handleSubmitSuccess = async (data: any) => {
     try {
-      await onSubmit(data)
-      if (role === 'company') {
-        navigate('/company/dashboard')
+      await onSubmit(data);
+      if (role === "company") {
+        navigate("/company/dashboard");
       } else {
-        navigate('/jobseeker/dashboard')
+        navigate("/jobseeker/dashboard");
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
     }
-  }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950">
+      <Card className="w-full max-w-md bg-slate-800 border-slate-700">
         <CardHeader>
-          <CardTitle>Iniciar Sesión</CardTitle>
-          <CardDescription>Accede a tu cuenta</CardDescription>
+          <CardTitle className="text-white">Iniciar Sesión</CardTitle>
+          <CardDescription className="text-slate-400">Accede a tu cuenta</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={handleSubmit(handleSubmitSuccess)} className="space-y-6">
               <div className="space-y-2">
-                <FormLabel>Tipo de Cuenta</FormLabel>
+                <FormLabel className="text-white">Tipo de Cuenta</FormLabel>
                 <Select value={role} onValueChange={(value: any) => setRole(value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-slate-700 border-slate-600">
                     <SelectItem value="job_seeker">Buscador de Empleos</SelectItem>
                     <SelectItem value="company">Empresa</SelectItem>
                   </SelectContent>
@@ -67,9 +57,14 @@ export function SigninForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="tu@email.com" type="email" {...field} />
+                      <Input
+                        placeholder="tu@email.com"
+                        type="email"
+                        className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -81,22 +76,31 @@ export function SigninForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contraseña</FormLabel>
+                    <FormLabel className="text-white">Contraseña</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tu contraseña" type="password" {...field} />
+                      <Input
+                        placeholder="Tu contraseña"
+                        type="password"
+                        className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                {isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
               </Button>
 
-              <p className="text-sm text-center">
-                ¿No tienes cuenta?{' '}
-                <a href="/" className="underline hover:no-underline">
+              <p className="text-sm text-center text-slate-300">
+                ¿No tienes cuenta?{" "}
+                <a href="/auth/signup" className="text-blue-400 underline hover:text-blue-300">
                   Crea una
                 </a>
               </p>
@@ -105,5 +109,5 @@ export function SigninForm() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

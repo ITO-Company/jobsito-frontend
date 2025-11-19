@@ -116,7 +116,7 @@ export function PricingSection() {
                   className={`w-full mb-8 h-11 font-semibold rounded-lg transition-all ${
                     plan.popular
                       ? `bg-linear-to-r ${plan.color} text-white hover:shadow-lg hover:scale-105`
-                      : "border border-slate-600 text-white hover:bg-slate-700"
+                      : "border border-slate-600 text-black hover:bg-slate-700"
                   }`}
                   variant={plan.popular ? "default" : "outline"}
                 >
