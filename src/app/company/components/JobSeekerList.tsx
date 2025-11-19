@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router'
 import { jobSeekerService, type JobSeekerResponse } from '@/services/jobseeker.service'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 
 export function JobSeekerList() {
   const navigate = useNavigate()

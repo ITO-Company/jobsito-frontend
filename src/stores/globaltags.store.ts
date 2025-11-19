@@ -1,12 +1,12 @@
 import { create } from 'zustand'
-import type { GlobalTag } from '@/services/globaltags.service'
+import type { GlobalTagResponse } from '@/services/types/responses'
 
 export interface GlobalTagsStore {
-  tags: GlobalTag[]
+  tags: GlobalTagResponse[]
   isLoading: boolean
   error: string | null
 
-  setTags: (tags: GlobalTag[]) => void
+  setTags: (tags: GlobalTagResponse[]) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   clearError: () => void

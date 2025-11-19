@@ -1,26 +1,8 @@
 import axiosInstance from '@/lib/axios'
 import type { CompanyUpdateInput } from '@/schemas/profile.schema'
+import type { CompanyResponse, PaginatedResponse } from './types/responses'
 
-export interface CompanyResponse {
-  id: string
-  company_name: string
-  email: string
-  description: string
-  website: string
-  phone: string
-  address: string
-  industry: string
-  company_size: string
-  logo_url: string
-}
-
-export interface PaginatedResponse<T> {
-  data: T[]
-  total: number
-  limit: number
-  offset: number
-  pages: number
-}
+export type { CompanyResponse, PaginatedResponse }
 
 export const companyService = {
   getMe: () =>

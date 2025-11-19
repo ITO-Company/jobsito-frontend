@@ -1,10 +1,8 @@
 import axiosInstance from '@/lib/axios'
 import type { SignupInput, SigninInput } from '@/schemas/auth.schema'
+import type { AuthResponse } from './types/responses'
 
-export interface AuthResponse {
-  token: string
-}
-
+export type { AuthResponse }
 export type UserRole = 'job_seeker' | 'company'
 
 export const authService = {

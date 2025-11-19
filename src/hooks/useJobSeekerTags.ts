@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { jobSeekerService } from '@/services/jobseeker.service'
 import { globalTagsService } from '@/services/globaltags.service'
 import { useGlobalTagsStore } from '@/stores/globaltags.store'
+import { useJobSeekerStore } from '@/stores/jobseeker.store'
 
 export const useGlobalTags = () => {
   const { setTags, setLoading, setError } = useGlobalTagsStore()
@@ -26,6 +27,7 @@ export const useGlobalTags = () => {
 
 export const useJobSeekerTags = () => {
   const { setError } = useGlobalTagsStore()
+  const { setJobSeeker } = useJobSeekerStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const addTag = useCallback(
@@ -34,7 +36,9 @@ export const useJobSeekerTags = () => {
       setError(null)
 
       try {
-        await jobSeekerService.addTag(tagId, proficiency)
+        const response = await jobSeekerService.addTag(tagId, proficiency)
+        setJobSeeker(response.data)
+        return response.data
       } catch (error: any) {
         const errorMessage = error.response?.data?.error || 'Error al agregar tag'
         setError(errorMessage)
@@ -43,7 +47,7 @@ export const useJobSeekerTags = () => {
         setIsSubmitting(false)
       }
     },
-    [setError]
+    [setError, setJobSeeker]
   )
 
   const removeTag = useCallback(
@@ -52,7 +56,9 @@ export const useJobSeekerTags = () => {
       setError(null)
 
       try {
-        await jobSeekerService.removeTag(tagId)
+        const response = await jobSeekerService.removeTag(tagId)
+        setJobSeeker(response.data)
+        return response.data
       } catch (error: any) {
         const errorMessage = error.response?.data?.error || 'Error al remover tag'
         setError(errorMessage)
@@ -61,7 +67,7 @@ export const useJobSeekerTags = () => {
         setIsSubmitting(false)
       }
     },
-    [setError]
+    [setError, setJobSeeker]
   )
 
   return { addTag, removeTag, isSubmitting }

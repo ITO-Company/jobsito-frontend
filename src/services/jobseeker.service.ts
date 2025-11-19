@@ -1,29 +1,13 @@
 import axiosInstance from '@/lib/axios'
 import type { JobSeekerUpdateInput } from '@/schemas/profile.schema'
+import type {
+  JobSeekerResponse,
+  JobSeekerTagResponse,
+  GlobalTagResponse,
+  PaginatedResponse,
+} from './types/responses'
 
-export interface JobSeekerResponse {
-  id: string
-  name: string
-  email: string
-  bio: string
-  phone: string
-  location: string
-  cv_url: string
-  portfolio_url: string
-  expected_salary_min: string
-  expected_salary_max: string
-  availability: string
-  skills: string
-  experience: string
-}
-
-export interface PaginatedResponse<T> {
-  data: T[]
-  total: number
-  limit: number
-  offset: number
-  pages: number
-}
+export type { JobSeekerResponse, JobSeekerTagResponse, GlobalTagResponse, PaginatedResponse }
 
 export const jobSeekerService = {
   getMe: () =>
@@ -41,10 +25,10 @@ export const jobSeekerService = {
     }),
 
   addTag: (tagId: string, proficiency: string = '') =>
-    axiosInstance.post(`/job-seekers/${tagId}`, null, {
+    axiosInstance.post<JobSeekerResponse>(`/job-seekers/tags/${tagId}`, null, {
       params: { proficiency },
     }),
 
   removeTag: (tagId: string) =>
-    axiosInstance.delete(`/job-seekers/${tagId}`),
+    axiosInstance.delete<JobSeekerResponse>(`/job-seekers/tags/${tagId}`),
 }
