@@ -57,12 +57,21 @@ export interface JobPostingResponse {
   id: string
   title: string
   description: string
-  requirements: string
+  requirement: string
   salary_min: string
   salary_max: string
+  work_type: string
+  experience_level: string
   location: string
-  job_type: string
-  posted_at: string
+  is_remote: string
+  is_hibrid: string
+  contract_type: string
+  benefit: string
+  status: string
+  is_closed: boolean
+  expires_at: string
+  tags?: GlobalTagResponse[]
+  applications?: ApplicationResponse[]
 }
 
 // Application Types

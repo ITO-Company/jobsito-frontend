@@ -9,6 +9,7 @@ import { JobSeekerDashboard } from "./components/JobSeekerDashboard"
 import { CompanyListForJobSeeker } from "./components/CompanyListForJobSeeker"
 import { CompanyDetail } from "./components/CompanyDetail"
 import { AssignTags } from "./components/AssignTags"
+import JobPostingSeekerRoute from "./job-posting/job-posting.route"
 
 export default function JobSeekerRoute() {
   return (
@@ -26,6 +27,7 @@ export default function JobSeekerRoute() {
             <Route path="/companies" element={<CompanyListForJobSeeker />} />
             <Route path="/companies/:id" element={<CompanyDetail />} />
             <Route path="/tags" element={<AssignTags />} />
+            <Route path="/job-posting/*" element={<JobPostingSeekerRoute />} />
           </Routes>
         </div>
       </SidebarInset>

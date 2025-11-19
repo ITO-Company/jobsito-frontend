@@ -43,6 +43,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: Tags,
       isActive: location.pathname.includes('/jobseeker/tags'),
     },
+    {
+      title: "Ofertas laborales",
+      url: "/jobseeker/job-posting",
+      icon: Tags,
+      isActive: location.pathname.includes('/jobseeker/job-posting'),
+    },
   ]
 
   // Rutas para Company
@@ -58,6 +64,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/company/seekers",
       icon: Briefcase,
       isActive: location.pathname.includes('/company/seekers'),
+    },
+    {
+      title: "Mis ofertas",
+      url: "/company/job-posting",
+      icon: Briefcase,
+      isActive: location.pathname.includes('/company/job-posting'),
     },
   ]
 

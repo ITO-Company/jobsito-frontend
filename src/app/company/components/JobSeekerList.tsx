@@ -61,7 +61,7 @@ export function JobSeekerList() {
                     {seeker.skills && <p className="text-sm">💼 {seeker.skills}</p>}
 
                     <Button
-                      onClick={() => navigate(`/seekers/${seeker.id}`)}
+                      onClick={() => navigate(`/company/seekers/${seeker.id}`)}
                       className="w-full"
                       variant="outline"
                     >

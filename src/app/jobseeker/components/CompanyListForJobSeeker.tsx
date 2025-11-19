@@ -61,7 +61,7 @@ export function CompanyListForJobSeeker() {
                     {company.description && <p className="text-sm line-clamp-2">{company.description}</p>}
 
                     <Button
-                      onClick={() => navigate(`/companies/${company.id}`)}
+                      onClick={() => navigate(`/jobseeker/companies/${company.id}`)}
                       className="w-full"
                       variant="outline"
                     >
