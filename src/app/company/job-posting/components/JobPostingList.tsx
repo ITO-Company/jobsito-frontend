@@ -74,6 +74,13 @@ export function JobPostingList() {
                         Editar
                       </Button>
                       <Button
+                        onClick={() => navigate(`/company/applications/job-posting/${job.id}`)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Aplicaciones
+                      </Button>
+                      <Button
                         onClick={() => navigate(`/company/job-posting/${job.id}/tags`)}
                         variant="outline"
                         size="sm"
