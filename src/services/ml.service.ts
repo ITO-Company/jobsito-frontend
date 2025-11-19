@@ -150,6 +150,11 @@ export async function getAllClusters(): Promise<AllClustersResponse> {
 export interface SimilarCandidate {
   jobseeker_id: string;
   name: string;
+  email?: string;
+  location?: string;
+  experience?: string;
+  num_skills?: number;
+  cluster?: number;
   is_self: boolean;
   distance: number;
 }
@@ -160,13 +165,48 @@ export interface SimilarCandidatesResponse {
   count: number;
 }
 
+// Backend response structure
+interface BackendSimilarCandidate {
+  jobseeker_id: string;
+  name: string;
+  email?: string;
+  location?: string;
+  experience?: string;
+  num_skills?: number;
+  cluster?: number;
+}
+
+interface BackendSimilarCandidatesResponse {
+  jobseeker_id: string;
+  similar_candidates: BackendSimilarCandidate[];
+  count: number;
+}
+
 export async function getSimilarCandidates(jobseekerId: string, topN: number = 10): Promise<SimilarCandidatesResponse> {
   try {
-    const response = await mlAxios.get<SimilarCandidatesResponse>(
+    const response = await mlAxios.get<BackendSimilarCandidatesResponse>(
       `clustering/similar-candidates/${jobseekerId}?top_n=${topN}`
     );
     console.log("Response clustering:😅😅", response.data);
-    return response.data;
+
+    // Transform backend response to match frontend interface
+    const transformedCandidates: SimilarCandidate[] = response.data.similar_candidates.map((candidate) => ({
+      jobseeker_id: candidate.jobseeker_id,
+      name: candidate.name,
+      email: candidate.email,
+      location: candidate.location,
+      experience: candidate.experience,
+      num_skills: candidate.num_skills,
+      cluster: candidate.cluster,
+      is_self: candidate.jobseeker_id === jobseekerId,
+      distance: 0, // Default distance for real candidates
+    }));
+
+    return {
+      jobseeker_id: jobseekerId,
+      similar_candidates: transformedCandidates,
+      count: transformedCandidates.length,
+    };
   } catch (error) {
     console.error("Error fetching similar candidates:", error);
     throw error;

@@ -7,12 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, CheckCircle, XCircle, Building2, Zap } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { JobPostingResponse } from "@/services/types/responses";
 
 interface JobPostingUI {
@@ -88,9 +83,7 @@ export function MatchDetails() {
     <div className="space-y-4">
       <div>
         <h2 className="text-2xl font-bold mb-2">Ofertas Laborales Disponibles</h2>
-        <p className="text-sm text-gray-600 mb-4">
-          Analiza tu compatibilidad con cualquier oferta laboral disponible
-        </p>
+        <p className="text-sm text-gray-600 mb-4">Analiza tu compatibilidad con cualquier oferta laboral disponible</p>
       </div>
 
       {/* Buscador */}
@@ -115,7 +108,9 @@ export function MatchDetails() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-gray-500">
-              {allJobs.length === 0 ? "No hay ofertas disponibles" : "No se encontraron ofertas que coincidan con la búsqueda"}
+              {allJobs.length === 0
+                ? "No hay ofertas disponibles"
+                : "No se encontraron ofertas que coincidan con la búsqueda"}
             </p>
           </CardContent>
         </Card>
@@ -131,9 +126,7 @@ export function MatchDetails() {
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
-                {job.description && (
-                  <p className="text-sm text-gray-600 line-clamp-3">{job.description}</p>
-                )}
+                {job.description && <p className="text-sm text-gray-600 line-clamp-3">{job.description}</p>}
                 <Button
                   onClick={() => handleAnalyzeCompatibility(job.id)}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
@@ -201,9 +194,7 @@ export function MatchDetails() {
                   <DetailItem label="Ubicación" value={matchDetails.location_match} icon="check" />
                 </div>
 
-                <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700">
-                  Aplicar a este trabajo
-                </Button>
+                <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700">Aplicar a este trabajo</Button>
               </>
             ) : (
               <p className="text-center text-gray-500 py-8">Cargando análisis de compatibilidad...</p>

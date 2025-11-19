@@ -156,41 +156,80 @@ export function ClusterAnalysis() {
                   <p className="text-sm text-gray-600 mt-2">Basado en skills, experiencia y preferencias salariales</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {similarCandidates.similar_candidates.map((candidate) => (
                       <div
                         key={candidate.jobseeker_id}
-                        className={`p-4 rounded-lg border-2 transition-all ${
+                        className={`p-5 rounded-xl border-2 transition-all ${
                           candidate.is_self
-                            ? "border-blue-600 bg-blue-50"
-                            : "border-gray-200 hover:border-gray-400 bg-white"
+                            ? "border-blue-500 bg-linear-to-br from-blue-50 to-blue-100"
+                            : "border-gray-200 hover:border-orange-400 bg-white hover:shadow-lg"
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-linear-to-br from-purple-400 to-blue-600 flex items-center justify-center">
-                              <User className="h-6 w-6 text-white" />
+                        {/* Header con nombre, badge y email */}
+                        <div className="mb-4">
+                          <div className="flex items-start gap-3 mb-2">
+                            <div className="h-14 w-14 rounded-full bg-linear-to-br from-purple-400 to-blue-600 flex items-center justify-center shrink-0">
+                              <User className="h-7 w-7 text-white" />
                             </div>
-                            <div className="flex-1">
-                              <p className="font-semibold flex items-center gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="font-bold text-lg truncate text-gray-900">{candidate.name}</p>
                                 {candidate.is_self && (
-                                  <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">Tú</span>
+                                  <span className="px-2.5 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full whitespace-nowrap">
+                                    Tú
+                                  </span>
                                 )}
-                                {candidate.name}
-                              </p>
-                              {!candidate.is_self && (
-                                <p className="text-xs text-gray-500">
-                                  Similitud: {((1 - candidate.distance) * 100).toFixed(0)}%
-                                </p>
+                              </div>
+                              {candidate.email && (
+                                <p className="text-xs text-gray-500 truncate mt-1">{candidate.email}</p>
                               )}
                             </div>
                           </div>
-                          {!candidate.is_self && (
-                            <div className="flex-1 max-w-xs bg-gray-200 rounded-full h-2">
+                        </div>
+
+                        {/* Barra de similitud (solo para otros candidatos) */}
+                        {!candidate.is_self && (
+                          <div className="mb-4 bg-white p-3 rounded-lg border border-orange-100">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Similitud</span>
+                              <span className="text-lg font-bold text-orange-600">
+                                {((1 - candidate.distance) * 100).toFixed(0)}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                               <div
-                                className="bg-linear-to-r from-orange-400 to-orange-600 h-2 rounded-full"
+                                className="bg-linear-to-r from-orange-400 to-orange-600 h-3 rounded-full transition-all"
                                 style={{ width: `${(1 - candidate.distance) * 100}%` }}
                               />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Grid de información - 2x2 */}
+                        <div className="grid grid-cols-2 gap-3">
+                          {candidate.location && (
+                            <div className="bg-linear-to-br from-pink-50 to-pink-100 p-3 rounded-lg border border-pink-100">
+                              <p className="text-xs font-semibold text-pink-700 mb-1">📍 UBICACIÓN</p>
+                              <p className="font-bold text-gray-900 text-sm">{candidate.location}</p>
+                            </div>
+                          )}
+                          {candidate.experience && (
+                            <div className="bg-linear-to-br from-purple-50 to-purple-100 p-3 rounded-lg border border-purple-100">
+                              <p className="text-xs font-semibold text-purple-700 mb-1">💼 EXPERIENCIA</p>
+                              <p className="font-bold text-gray-900 text-sm">{candidate.experience}</p>
+                            </div>
+                          )}
+                          {typeof candidate.num_skills === "number" && (
+                            <div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 rounded-lg border border-blue-100">
+                              <p className="text-xs font-semibold text-blue-700 mb-1">🎯 SKILLS</p>
+                              <p className="font-bold text-gray-900 text-sm">{candidate.num_skills}</p>
+                            </div>
+                          )}
+                          {typeof candidate.cluster === "number" && (
+                            <div className="bg-linear-to-br from-indigo-50 to-indigo-100 p-3 rounded-lg border border-indigo-100">
+                              <p className="text-xs font-semibold text-indigo-700 mb-1">👥 CLUSTER</p>
+                              <p className="font-bold text-gray-900 text-sm">#{candidate.cluster}</p>
                             </div>
                           )}
                         </div>
