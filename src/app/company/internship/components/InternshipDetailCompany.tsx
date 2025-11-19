@@ -4,6 +4,7 @@ import { useInternshipDetail } from '@/hooks/useInternship'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Briefcase, Mail, User } from 'lucide-react'
+import { MilestoneList } from './MilestoneList'
 
 export function InternshipDetailCompany() {
   const { id } = useParams()
@@ -125,6 +126,16 @@ export function InternshipDetailCompany() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Milestones */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Milestones</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <MilestoneList internshipId={internship.id} />
         </CardContent>
       </Card>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { useInternshipDetail } from '@/hooks/useInternship'
+import { MilestoneListSeeker } from './MilestoneListSeeker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Briefcase, Building2 } from 'lucide-react'
@@ -116,6 +117,16 @@ export function InternshipDetailSeeker() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Milestones Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Milestones</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <MilestoneListSeeker internshipId={id || ''} />
         </CardContent>
       </Card>
     </div>
