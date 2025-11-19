@@ -4,6 +4,7 @@ import { useIssueDetail } from '@/hooks/useIssue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from 'lucide-react'
+import { RequestListCompany } from './RequestListCompany'
 
 const formatDate = (dateString: string | undefined) => {
   if (!dateString) return 'Fecha inválida'
@@ -102,6 +103,11 @@ export function IssueDetailCompany() {
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>Actualizado: {formatDate(issue.updated_at)}</p>
             </div>
+          </div>
+
+          {/* Requests */}
+          <div className="border-t pt-6">
+            {issueId && <RequestListCompany issueId={issueId} />}
           </div>
         </CardContent>
       </Card>
