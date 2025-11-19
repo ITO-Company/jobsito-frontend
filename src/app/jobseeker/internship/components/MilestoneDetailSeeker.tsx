@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { useMilestoneDetail } from '@/hooks/useMilestone'
+import { IssueListSeeker } from './IssueListSeeker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from 'lucide-react'
@@ -58,7 +59,7 @@ export function MilestoneDetailSeeker() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Detalle del Milestone</h1>
-        <Button onClick={() => navigate(`/job-seeker/internships/${internshipId}`)} variant="outline">
+        <Button onClick={() => navigate(`/jobseeker/internships/${internshipId}`)} variant="outline">
           Volver
         </Button>
       </div>
@@ -103,6 +104,16 @@ export function MilestoneDetailSeeker() {
               <p>Actualizado: {formatDate(milestone.updated_at)}</p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Issues Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Issues</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <IssueListSeeker milestoneId={milestoneId || ''} />
         </CardContent>
       </Card>
     </div>
