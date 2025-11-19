@@ -5,8 +5,8 @@ import { SigninForm } from "./components/SigninForm";
 export default function AuthRoute() {
     return (
             <Routes>
+                <Route path="/" element={<SigninForm />} />
                 <Route path="/signup" element={<SignupForm />} />
-                <Route path="/signin" element={<SigninForm />} />
             </Routes>
 
     )

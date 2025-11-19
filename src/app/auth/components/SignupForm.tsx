@@ -1,76 +1,133 @@
 import { useSignup } from '@/hooks/useAuth'
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function SignupForm() {
+  const navigate = useNavigate()
   const [role, setRole] = useState<'job_seeker' | 'company'>('job_seeker')
   const { form, onSubmit } = useSignup(role)
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = form
+  const { handleSubmit, formState: { isSubmitting } } = form
+
+  const handleSubmitSuccess = async (data: any) => {
+    try {
+      await onSubmit(data)
+      navigate(`/dashboard/${role}`)
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto p-6 border rounded">
-      <h2 className="text-2xl font-bold mb-4">Crear Cuenta</h2>
+    <div className="flex items-center justify-center min-h-screen">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Crear Cuenta</CardTitle>
+          <CardDescription>Regístrate para comenzar</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={handleSubmit(handleSubmitSuccess)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="tu@email.com" type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Tipo de Cuenta</label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as 'job_seeker' | 'company')}
-          className="w-full border rounded px-3 py-2"
-        >
-          <option value="job_seeker">Buscador de Empleos</option>
-          <option value="company">Empresa</option>
-        </select>
-      </div>
+              <div className="space-y-2">
+                <FormLabel>Tipo de Cuenta</FormLabel>
+                <Select value={role} onValueChange={(value: any) => setRole(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="job_seeker">Buscador de Empleos</SelectItem>
+                    <SelectItem value="company">Empresa</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Nombre</label>
-        <input
-          {...register('name')}
-          type="text"
-          className="w-full border rounded px-3 py-2"
-        />
-        {errors.name && <span className="text-red-600 text-sm">{errors.name.message}</span>}
-      </div>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu nombre" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Email</label>
-        <input
-          {...register('email')}
-          type="email"
-          className="w-full border rounded px-3 py-2"
-        />
-        {errors.email && <span className="text-red-600 text-sm">{errors.email.message}</span>}
-      </div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contraseña</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Contraseña segura" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Contraseña</label>
-        <input
-          {...register('password')}
-          type="password"
-          className="w-full border rounded px-3 py-2"
-        />
-        {errors.password && <span className="text-red-600 text-sm">{errors.password.message}</span>}
-      </div>
+              <FormField
+                control={form.control}
+                name="confirm_password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirmar Contraseña</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Confirma tu contraseña" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Confirmar Contraseña</label>
-        <input
-          {...register('confirm_password')}
-          type="password"
-          className="w-full border rounded px-3 py-2"
-        />
-        {errors.confirm_password && (
-          <span className="text-red-600 text-sm">{errors.confirm_password.message}</span>
-        )}
-      </div>
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta'}
+              </Button>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-      >
-        {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta'}
-      </button>
-    </form>
+              <p className="text-sm text-center">
+                ¿Ya tienes cuenta?{' '}
+                <a href="/" className="underline hover:no-underline">
+                  Inicia sesión
+                </a>
+              </p>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
