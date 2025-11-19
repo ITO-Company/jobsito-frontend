@@ -1,6 +1,8 @@
 import {
   BadgeCheck,
   LogOut,
+  Moon,
+  Sun,
 } from "lucide-react"
 
 import {
@@ -23,6 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useTheme } from "@/hooks/useTheme"
 
 export function NavUser({
   user,
@@ -36,6 +39,7 @@ export function NavUser({
   onLogout?: () => void
 }) {
   const { isMobile } = useSidebar()
+  const { theme, toggleTheme } = useTheme()
 
   if (!user) {
     return null
@@ -89,6 +93,22 @@ export function NavUser({
               <DropdownMenuItem>
                 <BadgeCheck />
                 Mi Perfil
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={toggleTheme}>
+                {theme === 'light' ? (
+                  <>
+                    <Moon className="w-4 h-4" />
+                    Modo Oscuro
+                  </>
+                ) : (
+                  <>
+                    <Sun className="w-4 h-4" />
+                    Modo Claro
+                  </>
+                )}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

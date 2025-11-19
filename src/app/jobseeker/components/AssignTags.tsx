@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useGlobalTags, useJobSeekerTags } from '@/hooks/useJobSeekerTags'
+import { useJobSeekerProfile } from '@/hooks/useJobSeekerProfile'
 import { useGlobalTagsStore } from '@/stores/globaltags.store'
 import { useJobSeekerStore } from '@/stores/jobseeker.store'
 import type { GlobalTagResponse } from '@/services/types/responses'
@@ -18,14 +19,17 @@ export function AssignTags() {
   const { jobSeeker } = useJobSeekerStore()
   const { fetchTags } = useGlobalTags()
   const { addTag, removeTag, isSubmitting } = useJobSeekerTags()
+  const { fetchProfile } = useJobSeekerProfile()
   const [proficiency, setProficiency] = useState<{ [key: string]: string }>({})
   const [page, setPage] = useState(0)
 
   const limit = 20
 
+  // Cargar tags globales y perfil del jobseeker al montar
   useEffect(() => {
+    fetchProfile()
     fetchTags(limit, page * limit)
-  }, [page, fetchTags, limit])
+  }, [page, limit])
 
   // Mapear las tags asignadas desde jobSeeker.tags
   const assignedTagIds = new Set(jobSeeker?.tags?.map((tag) => tag.global_tag.id) || [])
@@ -67,6 +71,23 @@ export function AssignTags() {
 
       {error && <div className="p-4 border border-destructive rounded text-destructive">{error}</div>}
 
+      {jobSeeker?.tags && jobSeeker.tags.length > 0 && (
+        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Tus Habilidades Asignadas</h3>
+          <div className="flex flex-wrap gap-2">
+            {jobSeeker.tags.map((tag) => (
+              <div
+                key={tag.id}
+                className="bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 px-3 py-1 rounded-full text-sm font-medium"
+              >
+                {tag.global_tag.name}
+                <span className="ml-1 text-xs opacity-75">({tag.proficiency_level})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {isLoading ? (
         <p>Cargando habilidades...</p>
       ) : tags.length > 0 ? (
@@ -75,7 +96,7 @@ export function AssignTags() {
             {tags.map((tag: GlobalTagResponse) => {
               const isAssigned = assignedTagIds.has(tag.id)
               return (
-                <Card key={tag.id}>
+                <Card key={tag.id} className={isAssigned ? 'border-green-500 bg-green-50 dark:bg-green-950' : ''}>
                   <CardContent className="pt-6 flex justify-between items-center">
                     <div className="flex-1">
                       <p className="font-semibold">{tag.name}</p>
