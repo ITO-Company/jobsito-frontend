@@ -1,19 +1,16 @@
-import { Route, Routes } from "react-router"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/sidebar/app-sidebar"
-import { JobSeekerDashboard } from "./components/JobSeekerDashboard"
-import { CompanyListForJobSeeker } from "./components/CompanyListForJobSeeker"
-import { CompanyDetail } from "./components/CompanyDetail"
-import { AssignTags } from "./components/AssignTags"
-import JobPostingSeekerRoute from "./job-posting/job-posting.route"
-import ApplicationsSeekerRoute from "./applications/applications.route"
-import { SavedJobsRoute } from "./saved-jobs/saved-jobs.route"
-import InternshipSeekerRoute from "./internship/internship.route"
-import { kpiSeekerRoutes } from "./kpi/kpi.route"
+import { Route, Routes } from "react-router";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { JobSeekerDashboard } from "./components/JobSeekerDashboard";
+import { CompanyListForJobSeeker } from "./components/CompanyListForJobSeeker";
+import { CompanyDetail } from "./components/CompanyDetail";
+import { AssignTags } from "./components/AssignTags";
+import JobPostingSeekerRoute from "./job-posting/job-posting.route";
+import ApplicationsSeekerRoute from "./applications/applications.route";
+import { SavedJobsRoute } from "./saved-jobs/saved-jobs.route";
+import InternshipSeekerRoute from "./internship/internship.route";
+import { kpiSeekerRoutes } from "./kpi/kpi.route";
+import { RecommendationsPage } from "./recommendations/recommendations.route";
 
 export default function JobSeekerRoute() {
   return (
@@ -28,6 +25,7 @@ export default function JobSeekerRoute() {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Routes>
             <Route path="/dashboard" element={<JobSeekerDashboard />} />
+            <Route path="/recommendations" element={<RecommendationsPage />} />
             <Route path="/companies" element={<CompanyListForJobSeeker />} />
             <Route path="/companies/:id" element={<CompanyDetail />} />
             <Route path="/tags" element={<AssignTags />} />
@@ -40,5 +38,5 @@ export default function JobSeekerRoute() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

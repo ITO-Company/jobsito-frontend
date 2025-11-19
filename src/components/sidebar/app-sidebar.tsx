@@ -1,30 +1,17 @@
-import { useLocation } from "react-router"
-import {
-  Briefcase,
-  Building2,
-  Tags,
-  Bookmark,
-  GraduationCap,
-  BarChart3,
-} from "lucide-react"
+import { useLocation } from "react-router";
+import { Briefcase, Building2, Tags, Bookmark, GraduationCap, BarChart3, Sparkles } from "lucide-react";
 
-import { NavMain } from "@/components/sidebar/nav-main"
-import { NavUser } from "@/components/sidebar/nav-user"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar"
-import { useAuthStore } from "@/stores/auth.store"
+import { NavMain } from "@/components/sidebar/nav-main";
+import { NavUser } from "@/components/sidebar/nav-user";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const location = useLocation()
-  const { user, logout } = useAuthStore()
+  const location = useLocation();
+  const { user, logout } = useAuthStore();
 
   // Determinar si es jobseeker o company
-  const isJobSeeker = location.pathname.includes('/jobseeker')
+  const isJobSeeker = location.pathname.includes("/jobseeker");
 
   // Rutas para Job Seeker
   const jobSeekerNav = [
@@ -32,45 +19,51 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Mi Perfil",
       url: "/jobseeker/dashboard",
       icon: Briefcase,
-      isActive: location.pathname.includes('/jobseeker/dashboard'),
+      isActive: location.pathname.includes("/jobseeker/dashboard"),
+    },
+    {
+      title: "IA Recomendaciones",
+      url: "/jobseeker/recommendations",
+      icon: Sparkles,
+      isActive: location.pathname.includes("/jobseeker/recommendations"),
     },
     {
       title: "Empresas",
       url: "/jobseeker/companies",
       icon: Building2,
-      isActive: location.pathname.includes('/jobseeker/companies'),
+      isActive: location.pathname.includes("/jobseeker/companies"),
     },
     {
       title: "Mis Habilidades",
       url: "/jobseeker/tags",
       icon: Tags,
-      isActive: location.pathname.includes('/jobseeker/tags'),
+      isActive: location.pathname.includes("/jobseeker/tags"),
     },
     {
       title: "Ofertas laborales",
       url: "/jobseeker/job-posting",
       icon: Tags,
-      isActive: location.pathname.includes('/jobseeker/job-posting'),
+      isActive: location.pathname.includes("/jobseeker/job-posting"),
     },
     {
       title: "Trabajos Guardados",
       url: "/jobseeker/saved-jobs",
       icon: Bookmark,
-      isActive: location.pathname.includes('/jobseeker/saved-jobs'),
+      isActive: location.pathname.includes("/jobseeker/saved-jobs"),
     },
     {
       title: "Mis Aplicaciones",
       url: "/jobseeker/applications",
       icon: Tags,
-      isActive: location.pathname.includes('/jobseeker/applications'),
+      isActive: location.pathname.includes("/jobseeker/applications"),
     },
     {
       title: "Mis Pasantías",
       url: "/jobseeker/internships",
       icon: GraduationCap,
-      isActive: location.pathname.includes('/jobseeker/internships'),
-    }
-  ]
+      isActive: location.pathname.includes("/jobseeker/internships"),
+    },
+  ];
 
   // Rutas para Company
   const companyNav = [
@@ -78,51 +71,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Mi Empresa",
       url: "/company/dashboard",
       icon: Building2,
-      isActive: location.pathname.includes('/company/dashboard'),
+      isActive: location.pathname.includes("/company/dashboard"),
     },
     {
       title: "Buscadores",
       url: "/company/seekers",
       icon: Briefcase,
-      isActive: location.pathname.includes('/company/seekers'),
+      isActive: location.pathname.includes("/company/seekers"),
     },
     {
       title: "Mis ofertas",
       url: "/company/job-posting",
       icon: Briefcase,
-      isActive: location.pathname.includes('/company/job-posting'),
+      isActive: location.pathname.includes("/company/job-posting"),
     },
     {
       title: "Postulaciones Aceptadas",
       url: "/company/applications/accepted",
       icon: Briefcase,
-      isActive: location.pathname.includes('/company/applications/accepted'),
+      isActive: location.pathname.includes("/company/applications/accepted"),
     },
     {
       title: "Mis Pasantías",
       url: "/company/internships",
       icon: GraduationCap,
-      isActive: location.pathname.includes('/company/internships'),
+      isActive: location.pathname.includes("/company/internships"),
     },
     {
       title: "KPI",
       url: "/company/kpis",
       icon: BarChart3,
-      isActive: location.pathname.includes('/company/kpis'),
+      isActive: location.pathname.includes("/company/kpis"),
     },
-  ]
+  ];
 
-  const navItems = isJobSeeker ? jobSeekerNav : companyNav
+  const navItems = isJobSeeker ? jobSeekerNav : companyNav;
 
   const handleLogout = () => {
-    logout()
-    window.location.href = '/'
-  }
+    logout();
+    window.location.href = "/";
+  };
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-      </SidebarHeader>
+      <SidebarHeader></SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />
       </SidebarContent>
@@ -131,5 +123,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

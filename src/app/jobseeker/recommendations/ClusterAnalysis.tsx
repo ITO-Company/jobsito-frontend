@@ -1,0 +1,206 @@
+import { useEffect } from "react";
+import { useML } from "@/hooks/useML";
+import { useJobSeekerStore } from "@/stores/jobseeker.store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, Users, User, TrendingDown } from "lucide-react";
+
+export function ClusterAnalysis() {
+  const { jobSeeker } = useJobSeekerStore();
+  const { cluster, similarCandidates, loading, error, fetchCluster, fetchSimilarCandidates } = useML();
+
+  useEffect(() => {
+    if (jobSeeker?.id) {
+      fetchCluster(jobSeeker.id);
+      fetchSimilarCandidates(jobSeeker.id, 6);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (loading && !cluster) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+            <div>
+              <p className="font-medium text-red-900">Error</p>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+          <Button onClick={() => jobSeeker?.id && fetchCluster(jobSeeker.id)} className="mt-4" variant="outline">
+            Reintentar
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold flex items-center gap-2">
+        <Users className="h-6 w-6" />
+        Análisis de Clusters
+      </h2>
+
+      <Tabs defaultValue="cluster" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="cluster">Tu Cluster</TabsTrigger>
+          <TabsTrigger value="similar">Candidatos Similares</TabsTrigger>
+        </TabsList>
+
+        {/* Tu Cluster */}
+        <TabsContent value="cluster" className="space-y-4">
+          {cluster ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-purple-600" />
+                    Cluster #{cluster.cluster_id}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-linear-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Tamaño del Cluster</p>
+                      <p className="text-3xl font-bold text-purple-600">{cluster.cluster_size}</p>
+                      <p className="text-xs text-gray-500 mt-1">candidatos similares</p>
+                    </div>
+                    <div className="bg-linear-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Tu Posición</p>
+                      <p className="text-3xl font-bold text-blue-600">Centro</p>
+                      <p className="text-xs text-gray-500 mt-1">del cluster</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Miembros del Cluster</h3>
+                    <div className="space-y-2 max-h-96 overflow-y-auto">
+                      {cluster.members.map((member) => (
+                        <div
+                          key={member.jobseeker_id}
+                          className={`p-3 rounded-lg border-2 ${
+                            member.is_center ? "border-blue-600 bg-blue-50" : "border-gray-200 bg-white"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-semibold flex items-center gap-2">
+                                {member.is_center && (
+                                  <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">Tú</span>
+                                )}
+                                {member.name}
+                              </p>
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {member.skills.map((skill) => (
+                                  <span key={skill} className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                              <div className="text-xs text-gray-600 mt-2 space-y-1">
+                                <p>
+                                  <strong>Experiencia:</strong> {member.experience}
+                                </p>
+                                <p>
+                                  <strong>Salario esperado:</strong> {member.salary_range}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-center text-gray-500">No hay datos de cluster disponibles</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Candidatos Similares */}
+        <TabsContent value="similar" className="space-y-4">
+          {similarCandidates && similarCandidates.count > 0 ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingDown className="h-5 w-5 text-orange-600" />
+                    Candidatos Similares a Ti
+                  </CardTitle>
+                  <p className="text-sm text-gray-600 mt-2">Basado en skills, experiencia y preferencias salariales</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {similarCandidates.similar_candidates.map((candidate) => (
+                      <div
+                        key={candidate.jobseeker_id}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          candidate.is_self
+                            ? "border-blue-600 bg-blue-50"
+                            : "border-gray-200 hover:border-gray-400 bg-white"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-linear-to-br from-purple-400 to-blue-600 flex items-center justify-center">
+                              <User className="h-6 w-6 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-semibold flex items-center gap-2">
+                                {candidate.is_self && (
+                                  <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">Tú</span>
+                                )}
+                                {candidate.name}
+                              </p>
+                              {!candidate.is_self && (
+                                <p className="text-xs text-gray-500">
+                                  Similitud: {((1 - candidate.distance) * 100).toFixed(0)}%
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          {!candidate.is_self && (
+                            <div className="flex-1 max-w-xs bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-linear-to-r from-orange-400 to-orange-600 h-2 rounded-full"
+                                style={{ width: `${(1 - candidate.distance) * 100}%` }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-center text-gray-500">No hay candidatos similares disponibles</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

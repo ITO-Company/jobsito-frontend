@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router";
-import Landing from "@/landing/Landing";
+import Landing from "@/app/landing/Landing";
 import AuthRoute from "./auth/auth.route";
 import CompanyRoute from "./company/company.route";
 import JobSeekerRoute from "./jobseeker/jobseeker.route";
