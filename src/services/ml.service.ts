@@ -187,7 +187,17 @@ export async function getSimilarCandidates(jobseekerId: string, topN: number = 1
     const response = await mlAxios.get<BackendSimilarCandidatesResponse>(
       `clustering/similar-candidates/${jobseekerId}?top_n=${topN}`
     );
-    console.log("Response clustering:😅😅", response.data);
+    console.log("Response clustering:", response.data);
+
+    // Validar que similar_candidates existe y es un array
+    if (!response.data.similar_candidates || !Array.isArray(response.data.similar_candidates)) {
+      console.warn("No similar candidates found for jobseeker:", jobseekerId);
+      return {
+        jobseeker_id: jobseekerId,
+        similar_candidates: [],
+        count: 0,
+      };
+    }
 
     // Transform backend response to match frontend interface
     const transformedCandidates: SimilarCandidate[] = response.data.similar_candidates.map((candidate) => ({
@@ -209,6 +219,11 @@ export async function getSimilarCandidates(jobseekerId: string, topN: number = 1
     };
   } catch (error) {
     console.error("Error fetching similar candidates:", error);
-    throw error;
+    // Retornar array vacío en lugar de lanzar el error
+    return {
+      jobseeker_id: jobseekerId,
+      similar_candidates: [],
+      count: 0,
+    };
   }
 }

@@ -192,7 +192,9 @@ export function ClusterAnalysis() {
                         {!candidate.is_self && (
                           <div className="mb-4 bg-white p-3 rounded-lg border border-orange-100">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Similitud</span>
+                              <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                                Similitud
+                              </span>
                               <span className="text-lg font-bold text-orange-600">
                                 {((1 - candidate.distance) * 100).toFixed(0)}%
                               </span>
