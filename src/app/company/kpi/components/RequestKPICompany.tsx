@@ -2,6 +2,18 @@ import { useEffect } from 'react'
 import { useCompanyRequestKPI } from '@/hooks/useKPI'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, XCircle, Clock, Inbox } from 'lucide-react'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 export function RequestKPICompany() {
   const { data, isLoading, error, fetch } = useCompanyRequestKPI()
@@ -79,6 +91,65 @@ export function RequestKPICompany() {
         })}
       </div>
 
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Pie Chart for Status Distribution */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Solicitudes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Aprobadas', value: data.approved_requests },
+                    { name: 'Rechazadas', value: data.rejected_requests },
+                    { name: 'Pendientes', value: data.pending_requests },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {[0, 1, 2].map((index) => (
+                    <Cell key={`cell-${index}`} fill={['#10b981', '#ef4444', '#f59e0b'][index]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Bar Chart for Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Estado de Solicitudes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[
+                  { name: 'Aprobadas', value: data.approved_requests },
+                  { name: 'Rechazadas', value: data.rejected_requests },
+                  { name: 'Pendientes', value: data.pending_requests },
+                ]}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#6366f1" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Rates and Percentages */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Approval Rate */}
@@ -141,39 +212,24 @@ export function RequestKPICompany() {
           </CardContent>
         </Card>
 
-        {/* Issues with Pending */}
+        {/* Average Review Time */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Problemas Pendientes</CardTitle>
+            <CardTitle className="text-base">Tiempo Promedio</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold">{data.issues_with_pending_requests}</span>
+                <span className="text-3xl font-bold">{data.average_review_time_days.toFixed(1)}</span>
+                <span className="text-sm text-muted-foreground">días</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Problemas con solicitudes pendientes
+                Promedio de revisión
               </p>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Average Review Time */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Tiempo Promedio de Revisión</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <span className="text-4xl font-bold">{data.average_review_time_days.toFixed(1)}</span>
-            <span className="text-lg text-muted-foreground">días</span>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Promedio de tiempo para revisar solicitudes
-          </p>
-        </CardContent>
-      </Card>
     </div>
   )
 }

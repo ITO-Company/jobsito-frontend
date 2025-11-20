@@ -2,6 +2,18 @@ import { useEffect } from 'react'
 import { useIntershipRequestKPI } from '@/hooks/useKPI'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, XCircle, Clock, Inbox } from 'lucide-react'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 interface RequestKPISeekerProps {
   intershipId: string
@@ -81,6 +93,65 @@ export function RequestKPISeeker({ intershipId }: RequestKPISeekerProps) {
             </Card>
           )
         })}
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Pie Chart for Status Distribution */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Solicitudes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Aprobadas', value: data.approved_requests },
+                    { name: 'Rechazadas', value: data.rejected_requests },
+                    { name: 'Pendientes', value: data.pending_requests },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {[0, 1, 2].map((index) => (
+                    <Cell key={`cell-${index}`} fill={['#10b981', '#ef4444', '#f59e0b'][index]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Bar Chart for Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Estado de Solicitudes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[
+                  { name: 'Aprobadas', value: data.approved_requests },
+                  { name: 'Rechazadas', value: data.rejected_requests },
+                  { name: 'Pendientes', value: data.pending_requests },
+                ]}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#6366f1" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Rates and Percentages */}
