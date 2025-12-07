@@ -21,6 +21,10 @@ export function Navbar() {
     navigate("/auth/signup");
   };
 
+  const handleCoordinatorLogin = () => {
+    navigate("/coordinator/login");
+  };
+
   const navItems = [
     { label: "Inicio", id: "hero" },
     { label: "Quiénes Somos", id: "about" },
@@ -59,6 +63,13 @@ export function Navbar() {
           <div className="hidden md:flex gap-3">
             <Button
               variant="outline"
+              onClick={handleCoordinatorLogin}
+              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+            >
+              Coordinador
+            </Button>
+            <Button
+              variant="outline"
               onClick={handleSignUp}
               className="border-slate-600 text-slate-900 hover:bg-slate-800"
             >
@@ -91,6 +102,13 @@ export function Navbar() {
               </button>
             ))}
             <div className="flex gap-2 px-4">
+              <Button
+                variant="outline"
+                className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-800"
+                onClick={handleCoordinatorLogin}
+              >
+                Coordinador
+              </Button>
               <Button
                 variant="outline"
                 className="flex-1 border-slate-600 text-slate-200 hover:bg-slate-800"

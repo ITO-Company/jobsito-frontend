@@ -69,5 +69,11 @@ export const internshipService = {
     axiosInstance.get('/interships/overview/list', {
       params: { limit, offset },
     }),
+
+  // Obtener lista de overview de internships para coordinador (sin autenticación)
+  getOverviewListCoordinator: (limit: number = 10, offset: number = 0) =>
+    axiosInstance.get('/interships/overview/list/cor', {
+      params: { limit, offset },
+    }),
 }
 

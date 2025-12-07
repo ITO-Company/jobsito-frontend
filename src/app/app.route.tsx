@@ -4,6 +4,7 @@ import AuthRoute from "./auth/auth.route";
 import CompanyRoute from "./company/company.route";
 import JobSeekerRoute from "./jobseeker/jobseeker.route";
 import InternRoute from "./intern/intern.route";
+import CoordinatorRoute from "./coordinator/coordinator.route";
 
 export default function AppRoute() {
   return (
@@ -15,6 +16,7 @@ export default function AppRoute() {
         <Route path="/company/*" element={<CompanyRoute />} />
         <Route path="/jobseeker/*" element={<JobSeekerRoute />} />
         <Route path="/intern/*" element={<InternRoute />} />
+        <Route path="/coordinator/*" element={<CoordinatorRoute />} />
       </Routes>
     </div>
   );

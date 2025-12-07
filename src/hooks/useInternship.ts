@@ -146,3 +146,29 @@ export const useInternshipOverviewList = () => {
   return { internships, isLoading, error, total, fetchOverviewList }
 }
 
+export const useInternshipOverviewListCoordinator = () => {
+  const [internships, setInternships] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [total, setTotal] = useState(0)
+
+  const fetchOverviewList = useCallback(async (limit: number = 10, offset: number = 0) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.getOverviewListCoordinator(limit, offset)
+      setInternships(response.data.data)
+      setTotal(response.data.total)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al cargar overview'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { internships, isLoading, error, total, fetchOverviewList }
+}
+
