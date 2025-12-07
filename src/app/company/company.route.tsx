@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { CompanyDashboard } from "./components/CompanyDashboard"
 import { JobSeekerList } from "./components/JobSeekerList"
 import { JobSeekerDetail } from "./components/JobSeekerDetail"
+import { InternshipOverviewList } from "./components/InternshipOverviewList"
 import JobPostingRoute from "./job-posting/job-posting.route"
 import ApplicationsCompanyRoute from "./applications/applications.route"
 import { internshipCompanyRoutes } from "./internship/internship.route"
@@ -30,6 +31,7 @@ export default function CompanyRoute() {
             <Route path="/seekers/:id" element={<JobSeekerDetail />} />
             <Route path="/job-posting/*" element={<JobPostingRoute />} />
             <Route path="/applications/*" element={<ApplicationsCompanyRoute />} />
+            <Route path="/internship-overview" element={<InternshipOverviewList />} />
             {internshipCompanyRoutes}
             {kpiCompanyRoutes}
           </Routes>

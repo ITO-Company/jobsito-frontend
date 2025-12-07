@@ -59,4 +59,15 @@ export const internshipService = {
     axiosInstance.get<PaginatedResponse<IntershipResponse>>('/interships/company', {
       params: { limit, offset },
     }),
+
+  // Obtener overview de internship por ID
+  getOverview: (id: string) =>
+    axiosInstance.get(`/interships/${id}/overview`),
+
+  // Obtener lista de overview de internships
+  getOverviewList: (limit: number = 10, offset: number = 0) =>
+    axiosInstance.get('/interships/overview/list', {
+      params: { limit, offset },
+    }),
 }
+

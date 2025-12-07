@@ -5,7 +5,7 @@ import { useInternshipDetail } from '@/hooks/useInternship'
 import { useMilestoneList } from '@/hooks/useMilestone'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar"
-import { ChevronDown, ChevronRight, LogOut, Home } from 'lucide-react'
+import { ChevronDown, ChevronRight, LogOut, Home, FileText } from 'lucide-react'
 
 export function InternSidebar() {
   const navigate = useNavigate()
@@ -77,7 +77,7 @@ export function InternSidebar() {
 
       <SidebarContent className="px-0">
         {/* Navigation */}
-        <div className="px-4 py-2 border-b">
+        <div className="px-4 py-2 border-b space-y-2">
           <Button
             variant="ghost"
             size="sm"
@@ -86,6 +86,15 @@ export function InternSidebar() {
           >
             <Home size={16} className="mr-2" />
             Inicio
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/intern/internships/overview`)}
+            className="w-full justify-start"
+          >
+            <FileText size={16} className="mr-2" />
+            Información General
           </Button>
         </div>
 

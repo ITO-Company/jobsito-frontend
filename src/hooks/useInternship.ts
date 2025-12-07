@@ -95,3 +95,54 @@ export const useInternshipListCompany = () => {
 
   return { internships, isLoading, error, fetchCompanyInternships }
 }
+
+export const useInternshipOverview = () => {
+  const [overview, setOverview] = useState<any | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchOverview = useCallback(async (id: string) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.getOverview(id)
+      setOverview(response.data)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al cargar overview'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { overview, isLoading, error, fetchOverview }
+}
+
+export const useInternshipOverviewList = () => {
+  const [internships, setInternships] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [total, setTotal] = useState(0)
+
+  const fetchOverviewList = useCallback(async (limit: number = 10, offset: number = 0) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await internshipService.getOverviewList(limit, offset)
+      setInternships(response.data.data)
+      setTotal(response.data.total)
+      return response.data
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al cargar overview'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { internships, isLoading, error, total, fetchOverviewList }
+}
+

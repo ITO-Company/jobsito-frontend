@@ -1,5 +1,5 @@
 import { useLocation } from "react-router";
-import { Briefcase, Building2, Tags, Bookmark, GraduationCap, BarChart3, Sparkles } from "lucide-react";
+import { Briefcase, Building2, Tags, Bookmark, GraduationCap, BarChart3, Sparkles, FileText } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavUser } from "@/components/sidebar/nav-user";
@@ -90,6 +90,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/company/internships",
       icon: GraduationCap,
       isActive: location.pathname.includes("/company/internships"),
+    },
+    {
+      title: "Información de Pasantía",
+      url: "/company/internship-overview",
+      icon: FileText,
+      isActive: location.pathname.includes("/company/internship-overview"),
     },
     {
       title: "KPI",
