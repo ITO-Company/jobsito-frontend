@@ -1,19 +1,41 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { useJobPostingDetail } from '@/hooks/useJobPosting'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { jobPostingService } from '@/services/jobposting.service'
+import { Download } from 'lucide-react'
 
 export function JobPostingDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { jobPosting, isLoading, error, fetchJobPosting } = useJobPostingDetail()
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false)
 
   useEffect(() => {
     if (id) {
       fetchJobPosting(id)
     }
   }, [id])
+
+  const handleDownloadPDF = async () => {
+    try {
+      setIsDownloadingPDF(true)
+      const response = await jobPostingService.downloadJobPostingDetailPDF(id!)
+      const url = window.URL.createObjectURL(response.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `oferta-${id}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+    } finally {
+      setIsDownloadingPDF(false)
+    }
+  }
 
   if (isLoading) {
     return <div>Cargando...</div>
@@ -31,6 +53,15 @@ export function JobPostingDetail() {
           <p className="text-muted-foreground">{jobPosting.location}</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={handleDownloadPDF}
+            disabled={isDownloadingPDF}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Download size={18} />
+            {isDownloadingPDF ? 'Descargando...' : 'Descargar PDF'}
+          </Button>
           <Button onClick={() => navigate(`/company/job-posting/${id}/edit`)} variant="outline">
             Editar
           </Button>

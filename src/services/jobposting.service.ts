@@ -79,4 +79,16 @@ export const jobPostingService = {
   // Remover tag de oferta
   removeTag: (jobPostingId: string, tagId: string) =>
     axiosInstance.delete(`/job-postings/${jobPostingId}/tags/${tagId}`),
+
+  // Descargar PDF con lista de todas las ofertas
+  downloadJobPostingListPDF: () =>
+    axiosInstance.get('/job-postings/report/list', {
+      responseType: 'blob',
+    }),
+
+  // Descargar PDF de una oferta individual
+  downloadJobPostingDetailPDF: (id: string) =>
+    axiosInstance.get(`/job-postings/${id}/report`, {
+      responseType: 'blob',
+    }),
 }

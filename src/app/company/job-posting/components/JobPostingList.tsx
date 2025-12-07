@@ -5,6 +5,8 @@ import { useJobPostingStore } from '@/stores/jobposting.store'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useCompanyStore } from '@/stores/company.store'
+import { jobPostingService } from '@/services/jobposting.service'
+import { Download } from 'lucide-react'
 
 export function JobPostingList() {
   const navigate = useNavigate()
@@ -12,12 +14,32 @@ export function JobPostingList() {
   const { jobPostings, isLoading, error } = useJobPostingStore()
   const { fetchJobPostings } = useJobPostingList()
   const [page, setPage] = useState(0)
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false)
 
   const limit = 10
 
   useEffect(() => {
     fetchJobPostings(limit, page * limit, [], company?.id || '' )
   }, [page, limit, company?.id])
+
+  const handleDownloadListPDF = async () => {
+    try {
+      setIsDownloadingPDF(true)
+      const response = await jobPostingService.downloadJobPostingListPDF()
+      const url = window.URL.createObjectURL(response.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'ofertas-trabajo.pdf')
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+    } finally {
+      setIsDownloadingPDF(false)
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -26,12 +48,23 @@ export function JobPostingList() {
           <h2 className="text-2xl font-bold">Mis Ofertas Laborales</h2>
           <p className="text-muted-foreground">Gestiona tus ofertas de trabajo</p>
         </div>
-        <Button
-          onClick={() => navigate('/company/job-posting/create')}
-          variant="default"
-        >
-          Crear Oferta
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleDownloadListPDF}
+            disabled={isDownloadingPDF}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Download size={18} />
+            {isDownloadingPDF ? 'Descargando...' : 'Descargar PDF'}
+          </Button>
+          <Button
+            onClick={() => navigate('/company/job-posting/create')}
+            variant="default"
+          >
+            Crear Oferta
+          </Button>
+        </div>
       </div>
 
       {error && <div className="p-4 border border-destructive rounded text-destructive">{error}</div>}
@@ -86,6 +119,29 @@ export function JobPostingList() {
                         size="sm"
                       >
                         Tags
+                      </Button>
+                      <Button
+                        onClick={async () => {
+                          try {
+                            const response = await jobPostingService.downloadJobPostingDetailPDF(job.id)
+                            const url = window.URL.createObjectURL(response.data)
+                            const link = document.createElement('a')
+                            link.href = url
+                            link.setAttribute('download', `oferta-${job.id}.pdf`)
+                            document.body.appendChild(link)
+                            link.click()
+                            link.parentNode?.removeChild(link)
+                            window.URL.revokeObjectURL(url)
+                          } catch (error) {
+                            console.error('Error downloading PDF:', error)
+                          }
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1"
+                      >
+                        <Download size={14} />
+                        PDF
                       </Button>
                     </div>
                   </div>
