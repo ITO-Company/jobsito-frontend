@@ -1,14 +1,37 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useInternshipOverviewList } from '@/hooks/useInternship'
+import { internshipService } from '@/services/internship.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Download } from 'lucide-react'
 
 export function InternshipOverviewList() {
   const { internships, isLoading, error, fetchOverviewList } = useInternshipOverviewList()
+  const [downloadingPDFId, setDownloadingPDFId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchOverviewList()
   }, [])
+
+  const handleDownloadPDF = async (id: string) => {
+    try {
+      setDownloadingPDFId(id)
+      const response = await internshipService.downloadOverviewPDF(id)
+      const url = window.URL.createObjectURL(response.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `intership-${id}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+    } finally {
+      setDownloadingPDFId(null)
+    }
+  }
 
   if (isLoading) {
     return <p>Cargando información de pasantías...</p>
@@ -120,6 +143,20 @@ export function InternshipOverviewList() {
                     </div>
                   </div>
                 )}
+
+                {/* Download PDF Button */}
+                <div className="pt-4 border-t">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => handleDownloadPDF(internship.id)}
+                    disabled={downloadingPDFId === internship.id}
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <Download size={16} />
+                    {downloadingPDFId === internship.id ? 'Descargando...' : 'Descargar PDF'}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

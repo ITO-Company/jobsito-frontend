@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useInternshipOverviewListCoordinator } from '@/hooks/useInternship'
+import { internshipService } from '@/services/internship.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
+import { LogOut, ChevronLeft, ChevronRight, Download } from 'lucide-react'
 
 const ITEMS_PER_PAGE = 9
 
@@ -14,6 +15,8 @@ export function CoordinatorOverview() {
   const [currentPage, setCurrentPage] = useState(1)
   const [internships, setInternships] = useState<any[]>([])
   const [total, setTotal] = useState(0)
+  const [isDownloadingListPDF, setIsDownloadingListPDF] = useState(false)
+  const [downloadingPDFId, setDownloadingPDFId] = useState<string | null>(null)
 
   useEffect(() => {
     // Verificar que sea coordinador
@@ -39,6 +42,48 @@ export function CoordinatorOverview() {
     localStorage.removeItem('coordinator-token')
     localStorage.removeItem('coordinator-role')
     navigate('/coordinator/login')
+  }
+
+  const handleDownloadListPDF = async () => {
+    try {
+      setIsDownloadingListPDF(true)
+      // Descargar TODAS las pasantías (sin límite)
+      const response = await internshipService.downloadOverviewListPDFCoordinator(
+        100000,
+        0
+      )
+      const url = window.URL.createObjectURL(response.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'interships-list.pdf')
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+    } finally {
+      setIsDownloadingListPDF(false)
+    }
+  }
+
+  const handleDownloadIndividualPDF = async (id: string) => {
+    try {
+      setDownloadingPDFId(id)
+      const response = await internshipService.downloadOverviewPDF(id)
+      const url = window.URL.createObjectURL(response.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `intership-${id}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+    } finally {
+      setDownloadingPDFId(null)
+    }
   }
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
@@ -92,6 +137,14 @@ export function CoordinatorOverview() {
                 <p className="text-lg">Total de pasantías: <span className="font-bold text-2xl text-blue-400">{internships.length}</span></p>
                 <p className="text-sm text-slate-400">Página {currentPage} de {totalPages}</p>
               </div>
+              <Button
+                onClick={handleDownloadListPDF}
+                disabled={isDownloadingListPDF}
+                className="flex items-center gap-2"
+              >
+                <Download size={18} />
+                {isDownloadingListPDF ? 'Descargando...' : 'Descargar PDF'}
+              </Button>
             </div>
 
             {/* Grid de tarjetas */}
@@ -183,6 +236,20 @@ export function CoordinatorOverview() {
                         </div>
                       </div>
                     )}
+
+                    {/* Download PDF Button */}
+                    <div className="pt-2 border-t border-slate-700 mt-auto">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleDownloadIndividualPDF(internship.id)}
+                        disabled={downloadingPDFId === internship.id}
+                        className="w-full flex items-center justify-center gap-2"
+                      >
+                        <Download size={16} />
+                        {downloadingPDFId === internship.id ? 'Descargando...' : 'Descargar PDF'}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

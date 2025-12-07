@@ -75,5 +75,25 @@ export const internshipService = {
     axiosInstance.get('/interships/overview/list/cor', {
       params: { limit, offset },
     }),
+
+  // Descargar PDF de overview individual
+  downloadOverviewPDF: (id: string) =>
+    axiosInstance.get(`/interships/${id}/overview/pdf`, {
+      responseType: 'blob',
+    }),
+
+  // Descargar PDF de lista de overviews
+  downloadOverviewListPDF: (limit: number = 10, offset: number = 0) =>
+    axiosInstance.get('/interships/overview/list/pdf', {
+      params: { limit, offset },
+      responseType: 'blob',
+    }),
+
+  // Descargar PDF de lista de overviews para coordinador
+  downloadOverviewListPDFCoordinator: (limit: number = 10, offset: number = 0) =>
+    axiosInstance.get('/interships/overview/list/pdf/cor', {
+      params: { limit, offset },
+      responseType: 'blob',
+    }),
 }
 

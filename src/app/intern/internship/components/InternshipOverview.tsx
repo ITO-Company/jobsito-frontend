@@ -1,16 +1,18 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useInternshipOverview } from '@/hooks/useInternship'
+import { internshipService } from '@/services/internship.service'
 import { useInternshipStore } from '@/stores/internship.store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, Briefcase, Building } from 'lucide-react'
+import { Calendar, Briefcase, Building, Download } from 'lucide-react'
 
 export function InternshipOverview() {
   const navigate = useNavigate()
   const storeInternshipId = useInternshipStore((state) => state.internshipId)
   const { overview, isLoading, error, fetchOverview } = useInternshipOverview()
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false)
 
   // Obtener internship ID del store o directamente de localStorage
   const internshipId = storeInternshipId || (() => {
@@ -35,6 +37,25 @@ export function InternshipOverview() {
     fetchOverview(internshipId)
   }, [internshipId, fetchOverview, navigate])
 
+  const handleDownloadPDF = async () => {
+    try {
+      setIsDownloadingPDF(true)
+      const response = await internshipService.downloadOverviewPDF(internshipId)
+      const url = window.URL.createObjectURL(response.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `intership-${internshipId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+    } finally {
+      setIsDownloadingPDF(false)
+    }
+  }
+
   if (isLoading) {
     return <p>Cargando información general...</p>
   }
@@ -51,9 +72,19 @@ export function InternshipOverview() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Información General de Pasantía</h1>
-        <Button onClick={() => navigate('/intern/internships')} variant="outline">
-          Volver
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleDownloadPDF}
+            disabled={isDownloadingPDF}
+            className="flex items-center gap-2"
+          >
+            <Download size={18} />
+            {isDownloadingPDF ? 'Descargando...' : 'Descargar PDF'}
+          </Button>
+          <Button onClick={() => navigate('/intern/internships')} variant="outline">
+            Volver
+          </Button>
+        </div>
       </div>
 
       <Card>
