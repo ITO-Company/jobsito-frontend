@@ -57,12 +57,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: Tags,
       isActive: location.pathname.includes("/jobseeker/applications"),
     },
-    {
-      title: "Mis Pasantías",
-      url: "/jobseeker/internships",
-      icon: GraduationCap,
-      isActive: location.pathname.includes("/jobseeker/internships"),
-    },
   ];
 
   // Rutas para Company

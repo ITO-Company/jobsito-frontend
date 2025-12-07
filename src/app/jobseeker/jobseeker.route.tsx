@@ -8,7 +8,6 @@ import { AssignTags } from "./components/AssignTags";
 import JobPostingSeekerRoute from "./job-posting/job-posting.route";
 import ApplicationsSeekerRoute from "./applications/applications.route";
 import { SavedJobsRoute } from "./saved-jobs/saved-jobs.route";
-import InternshipSeekerRoute from "./internship/internship.route";
 import { kpiSeekerRoutes } from "./kpi/kpi.route";
 import { RecommendationsPage } from "./recommendations/recommendations.route";
 
@@ -32,7 +31,6 @@ export default function JobSeekerRoute() {
             <Route path="/job-posting/*" element={<JobPostingSeekerRoute />} />
             <Route path="/applications/*" element={<ApplicationsSeekerRoute />} />
             <Route path="/saved-jobs/*" element={<SavedJobsRoute />} />
-            <Route path="/internships/*" element={<InternshipSeekerRoute />} />
             {kpiSeekerRoutes}
           </Routes>
         </div>

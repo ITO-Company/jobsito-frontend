@@ -4,6 +4,7 @@ import { useInternshipDetail } from '@/hooks/useInternship'
 import { useInternshipStore } from '@/stores/internship.store'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Calendar, Briefcase, Building } from 'lucide-react'
 import { MilestoneListSeeker } from './MilestoneListSeeker'
 
@@ -47,19 +48,6 @@ export function InternshipDetailSeeker() {
     return <p>Pasantía no encontrada</p>
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'active':
-        return 'bg-green-100 dark:bg-green-900 text-green-900 dark:text-green-100'
-      case 'completed':
-        return 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
-      case 'cancelled':
-        return 'bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100'
-      default:
-        return 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -76,9 +64,9 @@ export function InternshipDetailSeeker() {
               <CardTitle className="text-2xl">{internship.job_posting?.title || 'Oferta sin título'}</CardTitle>
               <p className="text-muted-foreground mt-2">Estado: </p>
             </div>
-            <span className={`text-sm px-3 py-1 rounded ${getStatusColor(internship.status)}`}>
+            <Badge variant="default">
               {internship.status}
-            </span>
+            </Badge>
           </div>
         </CardHeader>
 
