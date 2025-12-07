@@ -1,21 +1,31 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { useInternshipDetail } from '@/hooks/useInternship'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Calendar, Briefcase, Mail, User } from 'lucide-react'
+import { Calendar, Briefcase, Mail, User, Eye, EyeOff, Copy, Check } from 'lucide-react'
 import { MilestoneList } from './MilestoneList'
 
 export function InternshipDetailCompany() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { internship, isLoading, error, fetchInternship } = useInternshipDetail()
+  const [showId, setShowId] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (id) {
       fetchInternship(id)
     }
   }, [id])
+
+  const handleCopyId = () => {
+    if (internship?.id) {
+      navigator.clipboard.writeText(internship.id)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
 
   if (isLoading) {
     return <p>Cargando pasantía...</p>
@@ -42,6 +52,8 @@ export function InternshipDetailCompany() {
     }
   }
 
+  const maskedId = internship.id ? internship.id.substring(0, 8) + '•'.repeat(Math.max(0, internship.id.length - 12)) + internship.id.substring(internship.id.length - 4) : ''
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -65,6 +77,36 @@ export function InternshipDetailCompany() {
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {/* ID de Pasantía */}
+          <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground mb-2">ID de Pasantía (Para Pasantes)</p>
+                <div className="flex items-center gap-2">
+                  <code className="bg-slate-200 dark:bg-slate-800 px-3 py-2 rounded font-mono text-sm">
+                    {showId ? internship.id : maskedId}
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowId(!showId)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {showId ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleCopyId}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Información del Pasante */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold mb-4">Información del Pasante</h3>

@@ -1,24 +1,44 @@
-import { Route, Routes } from "react-router";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { internshipSeekerRoutes } from "./internship/internship.route";
+import { Route, Routes } from "react-router"
+import { useState } from "react"
+import { InternSidebar } from "@/components/sidebar/intern-sidebar"
+import { internshipSeekerRoutes } from "./internship/internship.route"
+import { Menu } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function InternRoute() {
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-          </div>
+    <div className="flex h-screen bg-slate-900">
+      {/* Sidebar */}
+      <div className={`transition-all duration-300 ${sidebarOpen ? "w-64" : "w-0"} overflow-hidden`}>
+        <InternSidebar isOpen={sidebarOpen} />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="h-16 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="text-slate-400 hover:text-white"
+          >
+            <Menu size={20} />
+          </Button>
+          <h1 className="text-xl font-bold text-white">Sistema de Pasantías</h1>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Routes>
-            <Route path="/internships/*" element={<Routes>{internshipSeekerRoutes}</Routes>} />
-          </Routes>
+
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-y-auto bg-slate-900">
+          <div className="max-w-7xl mx-auto p-6">
+            <Routes>
+              <Route path="/*" element={<Routes>{internshipSeekerRoutes}</Routes>} />
+            </Routes>
+          </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+      </div>
+    </div>
+  )
 }

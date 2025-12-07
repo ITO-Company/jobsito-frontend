@@ -1,21 +1,39 @@
 import { useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import { useInternshipDetail } from '@/hooks/useInternship'
+import { useInternshipStore } from '@/stores/internship.store'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Briefcase, Building } from 'lucide-react'
 import { MilestoneListSeeker } from './MilestoneListSeeker'
 
 export function InternshipDetailSeeker() {
-  const { id } = useParams()
   const navigate = useNavigate()
+  const storeInternshipId = useInternshipStore((state) => state.internshipId)
   const { internship, isLoading, error, fetchInternship } = useInternshipDetail()
 
-  useEffect(() => {
-    if (id) {
-      fetchInternship(id)
+  // Obtener el internship ID del store o directamente de localStorage
+  const internshipId = storeInternshipId || (() => {
+    try {
+      const stored = localStorage.getItem('internship-store')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        return parsed.internshipId
+      }
+    } catch (e) {
+      // Error parsing localStorage
     }
-  }, [id])
+    return null
+  })()
+
+  useEffect(() => {
+    if (!internshipId) {
+      navigate('/intern/internships')
+      return
+    }
+
+    fetchInternship(internshipId)
+  }, [internshipId, fetchInternship, navigate])
 
   if (isLoading) {
     return <p>Cargando pasantía...</p>

@@ -98,12 +98,25 @@ export function SigninForm() {
                 {isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
               </Button>
 
-              <p className="text-sm text-center text-slate-300">
-                ¿No tienes cuenta?{" "}
-                <a href="/auth/signup" className="text-blue-400 underline hover:text-blue-300">
-                  Crea una
-                </a>
-              </p>
+              <div className="space-y-3 pt-2">
+                <p className="text-sm text-center text-slate-300">
+                  ¿No tienes cuenta?{" "}
+                  <a href="/auth/signup" className="text-blue-400 underline hover:text-blue-300">
+                    Crea una
+                  </a>
+                </p>
+                <div className="border-t border-slate-600 pt-3">
+                  <p className="text-xs text-center text-slate-400 mb-2">¿Eres pasante?</p>
+                  <Button
+                    type="button"
+                    onClick={() => window.location.href = "/auth/intern-signin"}
+                    variant="outline"
+                    className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+                  >
+                    Acceder como Pasante
+                  </Button>
+                </div>
+              </div>
             </form>
           </Form>
         </CardContent>

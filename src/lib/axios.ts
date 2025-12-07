@@ -28,8 +28,15 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expirado o inválido
       localStorage.removeItem('auth-token')
-      localStorage.removeItem('auth-store')
-      window.location.href = '/login'
+      localStorage.removeItem('internship-store')
+      
+      // Redirigir al login apropiado
+      const currentPath = window.location.pathname
+      if (currentPath.includes('/intern')) {
+        window.location.href = '/auth/intern-signin'
+      } else {
+        window.location.href = '/auth/signin'
+      }
     }
     return Promise.reject(error)
   }
