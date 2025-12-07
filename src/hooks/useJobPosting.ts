@@ -13,6 +13,7 @@ export const useJobPostingList = () => {
 
     try {
       const response = await jobPostingService.getAll(limit, offset, tagIds, companyId)
+      console.log('Fetched job postings:', response.data.data)
       setJobPostings(response.data.data)
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || 'Error al cargar ofertas'
