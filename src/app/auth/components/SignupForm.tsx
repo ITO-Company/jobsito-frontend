@@ -15,16 +15,28 @@ export function SignupForm() {
   const { error: authError } = useAuth();
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = form;
 
   const handleSubmitSuccess = async (data: any) => {
     try {
+      console.log("Datos a enviar:", {
+        email: data.email,
+        name: data.name,
+        password: data.password,
+        confirm_password: data.confirm_password,
+      });
       await onSubmit(data);
-      const dashboardPath = role === "job_seeker" ? "/jobseeker/dashboard" : "/company/dashboard";
-      navigate(dashboardPath);
-    } catch (error) {
-      console.error("Error:", error);
+      
+      // Redirect basado en el rol
+      if (role === "company") {
+        navigate("/company/dashboard");
+      } else {
+        navigate("/jobseeker/dashboard");
+      }
+    } catch (error: any) {
+      console.error("Error completo:", error);
+      console.error("Respuesta del servidor:", error.response?.data);
     }
   };
 
@@ -130,6 +142,12 @@ export function SignupForm() {
                   </FormItem>
                 )}
               />
+
+              {errors.confirm_password && (
+                <div className="text-red-400 text-sm">
+                  {errors.confirm_password.message}
+                </div>
+              )}
 
               <Button
                 type="submit"
