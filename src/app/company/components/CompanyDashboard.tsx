@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useCompanyStore } from '@/stores/company.store'
 import { useCompanyProfile, useCompanyUpdateForm } from '@/hooks/useCompanyProfile'
 import {
@@ -15,9 +16,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea'
 
 export function CompanyDashboard() {
+  const navigate = useNavigate()
+  const [showSuccess, setShowSuccess] = useState(false)
   const { company, isLoading, error } = useCompanyStore()
   const { fetchProfile } = useCompanyProfile()
-  const { form, onSubmit } = useCompanyUpdateForm()
+  
+  const handleSuccess = () => {
+    setShowSuccess(true)
+    setTimeout(() => {
+      navigate('/dashboard/company')
+    }, 2000)
+  }
+  
+  const { form, onSubmit } = useCompanyUpdateForm(handleSuccess)
   const { handleSubmit, formState: { isSubmitting } } = form
 
   useEffect(() => {
@@ -39,6 +50,11 @@ export function CompanyDashboard() {
             <CardDescription>Edita la información de tu empresa</CardDescription>
           </CardHeader>
           <CardContent>
+            {showSuccess && (
+              <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                ¡Registrado exitosamente! Redirigiendo...
+              </div>
+            )}
             {isLoading && <p>Cargando...</p>}
             {error && <div className="mb-4 p-4 border border-destructive rounded">{error}</div>}
 

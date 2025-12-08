@@ -46,7 +46,7 @@ export const useCompanyProfile = () => {
   return { fetchProfile, updateProfile }
 }
 
-export const useCompanyUpdateForm = () => {
+export const useCompanyUpdateForm = (onSuccess?: () => void) => {
   const { updateProfile } = useCompanyProfile()
 
   const form = useForm<CompanyUpdateInput>({
@@ -58,11 +58,14 @@ export const useCompanyUpdateForm = () => {
     async (data: CompanyUpdateInput) => {
       try {
         await updateProfile(data)
+        if (onSuccess) {
+          onSuccess()
+        }
       } catch (error) {
         console.error('Update failed:', error)
       }
     },
-    [updateProfile]
+    [updateProfile, onSuccess]
   )
 
   return { form, onSubmit }

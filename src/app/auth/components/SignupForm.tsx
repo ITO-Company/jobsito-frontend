@@ -1,4 +1,5 @@
 import { useSignup } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -11,6 +12,7 @@ export function SignupForm() {
   const navigate = useNavigate();
   const [role, setRole] = useState<"job_seeker" | "company">("job_seeker");
   const { form, onSubmit } = useSignup(role);
+  const { error: authError } = useAuth();
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -19,7 +21,8 @@ export function SignupForm() {
   const handleSubmitSuccess = async (data: any) => {
     try {
       await onSubmit(data);
-      navigate(`/dashboard/${role}`);
+      const dashboardPath = role === "job_seeker" ? "/jobseeker/dashboard" : "/company/dashboard";
+      navigate(dashboardPath);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -35,6 +38,11 @@ export function SignupForm() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={handleSubmit(handleSubmitSuccess)} className="space-y-6">
+              {authError && (
+                <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-2 rounded-md text-sm">
+                  {authError}
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="email"
