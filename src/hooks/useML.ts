@@ -6,12 +6,14 @@ import {
   getCluster,
   getAllClusters,
   getSimilarCandidates,
+  getGeminiRecommendations,
   type JobRecommendationsResponse,
   type MatchDetailsResponse,
   type CompanyRecommendationsResponse,
   type ClusterResponse,
   type AllClustersResponse,
   type SimilarCandidatesResponse,
+  type GeminiRecommendationsResponse,
 } from "@/services/ml.service";
 
 export function useML() {
@@ -127,6 +129,24 @@ export function useML() {
     }
   }, []);
 
+  // Gemini Recommendations
+  const [geminiRecommendations, setGeminiRecommendations] = useState<GeminiRecommendationsResponse | null>(null);
+  const fetchGeminiRecommendations = useCallback(async (jobseekerId: string, topN = 10) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getGeminiRecommendations(jobseekerId, topN);
+      setGeminiRecommendations(data);
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Error fetching gemini recommendations";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const clearError = useCallback(() => setError(null), []);
   const resetAll = useCallback(() => {
     setJobRecommendations(null);
@@ -135,6 +155,7 @@ export function useML() {
     setCluster(null);
     setAllClusters(null);
     setSimilarCandidates(null);
+    setGeminiRecommendations(null);
     setError(null);
   }, []);
 
@@ -161,5 +182,8 @@ export function useML() {
     // Similar Candidates
     similarCandidates,
     fetchSimilarCandidates,
+    // Gemini Recommendations
+    geminiRecommendations,
+    fetchGeminiRecommendations,
   };
 }

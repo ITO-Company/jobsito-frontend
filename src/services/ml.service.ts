@@ -227,3 +227,51 @@ export async function getSimilarCandidates(jobseekerId: string, topN: number = 1
     };
   }
 }
+
+// ==================== Gemini Recommendation ====================
+export interface JobDetails {
+  description: string;
+  location: string;
+  experience_level: string;
+  work_type: string;
+  is_remote: boolean;
+  salary_min: number;
+  salary_max: number;
+  required_skills: string;
+}
+
+export interface GeminiRecommendation {
+  job_id: string;
+  title: string;
+  company: string;
+  score: string;
+  rank: number;
+  match_reason: string;
+  key_matches: string[];
+  potential_gaps: string[];
+  details: JobDetails;
+}
+
+export interface GeminiRecommendationsResponse {
+  jobseeker_id: string;
+  jobseeker_name: string;
+  recommendations: GeminiRecommendation[];
+  count: number;
+  summary: string;
+}
+
+export async function getGeminiRecommendations(
+  jobseekerId: string,
+  topN: number = 10
+): Promise<GeminiRecommendationsResponse> {
+  try {
+    const response = await mlAxios.get<GeminiRecommendationsResponse>(
+      `recommendation/recommend-gemini/${jobseekerId}?top_n=${topN}`
+    );
+    console.log("Gemini Recommendations:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching gemini recommendations:", error);
+    throw error;
+  }
+}
