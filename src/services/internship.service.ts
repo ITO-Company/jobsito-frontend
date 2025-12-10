@@ -76,9 +76,9 @@ export const internshipService = {
       params: { limit, offset },
     }),
 
-  // Descargar PDF de overview individual
+  // Descargar PDF detallado individual con milestones, issues y requests
   downloadOverviewPDF: (id: string) =>
-    axiosInstance.get(`/interships/${id}/overview/pdf`, {
+    axiosInstance.get(`/interships/${id}/detailed/pdf`, {
       responseType: 'blob',
     }),
 
