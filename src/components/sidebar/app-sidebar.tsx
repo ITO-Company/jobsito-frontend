@@ -22,7 +22,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       isActive: location.pathname.includes("/jobseeker/dashboard"),
     },
     {
-      title: "IA Recomendaciones",
+      title: "Recomendaciones",
       url: "/jobseeker/recommendations",
       icon: Sparkles,
       isActive: location.pathname.includes("/jobseeker/recommendations"),

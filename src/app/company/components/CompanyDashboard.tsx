@@ -1,45 +1,41 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { useCompanyStore } from '@/stores/company.store'
-import { useCompanyProfile, useCompanyUpdateForm } from '@/hooks/useCompanyProfile'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { useCompanyStore } from "@/stores/company.store";
+import { useCompanyProfile, useCompanyUpdateForm } from "@/hooks/useCompanyProfile";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 export function CompanyDashboard() {
-  const navigate = useNavigate()
-  const [showSuccess, setShowSuccess] = useState(false)
-  const { company, isLoading, error } = useCompanyStore()
-  const { fetchProfile } = useCompanyProfile()
-  
+  const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { company, isLoading, error } = useCompanyStore();
+  const { fetchProfile } = useCompanyProfile();
+
   const handleSuccess = () => {
-    setShowSuccess(true)
+    setShowSuccess(true);
     setTimeout(() => {
-      navigate('/dashboard/company')
-    }, 2000)
-  }
-  
-  const { form, onSubmit } = useCompanyUpdateForm(handleSuccess)
-  const { handleSubmit, formState: { isSubmitting } } = form
+      navigate("/dashboard/company");
+    }, 2000);
+  };
+
+  const { form, onSubmit } = useCompanyUpdateForm(handleSuccess);
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form;
 
   useEffect(() => {
-    fetchProfile()
-  }, [fetchProfile])
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
     if (company) {
-      form.reset(company as any)
+      form.reset(company as any);
     }
-  }, [company, form])
+  }, [company, form]);
 
   return (
     <div className="min-h-screen p-6">
@@ -174,7 +170,7 @@ export function CompanyDashboard() {
                   />
 
                   <Button type="submit" disabled={isSubmitting} className="w-full">
-                    {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+                    {isSubmitting ? "Guardando..." : "Guardar Cambios"}
                   </Button>
                 </form>
               </Form>
@@ -183,5 +179,5 @@ export function CompanyDashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

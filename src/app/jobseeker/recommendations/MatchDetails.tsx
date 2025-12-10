@@ -136,7 +136,10 @@ export function MatchDetails() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredJobs.map((job) => (
-            <Card key={job.id} className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800 hover:border-blue-700">
+            <Card
+              key={job.id}
+              className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800 hover:border-blue-700"
+            >
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg line-clamp-2 text-white">{job.title}</CardTitle>
                 <p className="text-sm text-gray-400 flex items-center gap-1 mt-2">
@@ -192,25 +195,37 @@ export function MatchDetails() {
                 </div>
 
                 {/* Overall Score */}
-                <div className={`p-4 rounded-lg border ${getCompatibilityBg(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}`}>
+                <div
+                  className={`p-4 rounded-lg border ${getCompatibilityBg(
+                    geminiMatchDetails.compatibility_analysis.overall_score_numeric
+                  )}`}
+                >
                   <p className="text-sm text-gray-300 mb-3">Compatibilidad General</p>
                   <div className="flex items-end gap-4">
                     <div className="flex items-center gap-2">
-                      <div className={`text-5xl font-bold ${getCompatibilityColor(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}`}>
+                      <div
+                        className={`text-5xl font-bold ${getCompatibilityColor(
+                          geminiMatchDetails.compatibility_analysis.overall_score_numeric
+                        )}`}
+                      >
                         {geminiMatchDetails.compatibility_analysis.overall_score}
                       </div>
-                      <div className="text-3xl">{getScoreEmoji(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}</div>
+                      <div className="text-3xl">
+                        {getScoreEmoji(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}
+                      </div>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-gray-300 mb-2">{geminiMatchDetails.compatibility_analysis.nivel_compatibilidad}</p>
+                      <p className="text-sm text-gray-300 mb-2">
+                        {geminiMatchDetails.compatibility_analysis.nivel_compatibilidad}
+                      </p>
                       <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
                         <div
                           className={`h-3 rounded-full transition-all ${
                             geminiMatchDetails.compatibility_analysis.overall_score_numeric >= 70
                               ? "bg-gradient-to-r from-green-400 to-green-600"
                               : geminiMatchDetails.compatibility_analysis.overall_score_numeric >= 50
-                                ? "bg-gradient-to-r from-yellow-400 to-yellow-600"
-                                : "bg-gradient-to-r from-orange-400 to-orange-600"
+                              ? "bg-gradient-to-r from-yellow-400 to-yellow-600"
+                              : "bg-gradient-to-r from-orange-400 to-orange-600"
                           }`}
                           style={{ width: `${geminiMatchDetails.compatibility_analysis.overall_score_numeric}%` }}
                         />
@@ -230,8 +245,14 @@ export function MatchDetails() {
                     score={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.score_numeric}
                     weight={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.weight}
                     analysis={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.analysis}
-                    matches={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.habilidades_coincidentes}
-                    gaps={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.habilidades_faltantes}
+                    matches={
+                      geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad
+                        .habilidades_coincidentes
+                    }
+                    gaps={
+                      geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad
+                        .habilidades_faltantes
+                    }
                   />
 
                   {/* Salary */}
@@ -249,7 +270,9 @@ export function MatchDetails() {
                     score={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.score_numeric}
                     weight={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.weight}
                     analysis={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.analysis}
-                    additionalInfo={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.tipo_compatibilidad}
+                    additionalInfo={
+                      geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.tipo_compatibilidad
+                    }
                   />
 
                   {/* Experience */}
@@ -264,10 +287,17 @@ export function MatchDetails() {
                   {/* Availability */}
                   <CompatibilityItem
                     label="Disponibilidad"
-                    score={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.score_numeric}
+                    score={
+                      geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.score_numeric
+                    }
                     weight={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.weight}
-                    analysis={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.analysis}
-                    additionalInfo={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.tipo_compatibilidad}
+                    analysis={
+                      geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.analysis
+                    }
+                    additionalInfo={
+                      geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad
+                        .tipo_compatibilidad
+                    }
                   />
                 </div>
 
@@ -341,7 +371,12 @@ interface CompatibilityItemProps {
 
 function CompatibilityItem({ label, score, weight, analysis, matches, gaps, additionalInfo }: CompatibilityItemProps) {
   const scoreColor = score >= 70 ? "text-green-400" : score >= 50 ? "text-yellow-400" : "text-orange-400";
-  const bgColor = score >= 70 ? "bg-green-900/20 border-green-700" : score >= 50 ? "bg-yellow-900/20 border-yellow-700" : "bg-orange-900/20 border-orange-700";
+  const bgColor =
+    score >= 70
+      ? "bg-green-900/20 border-green-700"
+      : score >= 50
+      ? "bg-yellow-900/20 border-yellow-700"
+      : "bg-orange-900/20 border-orange-700";
 
   return (
     <div className={`p-3 rounded-lg border ${bgColor}`}>
