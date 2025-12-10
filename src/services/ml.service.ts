@@ -275,3 +275,114 @@ export async function getGeminiRecommendations(
     throw error;
   }
 }
+
+// ==================== Match Details Gemini ====================
+export interface JobSeekerDetail {
+  id: string;
+  name: string;
+  experience_years: string;
+  location: string;
+  expected_salary_min: number;
+  expected_salary_max: number;
+  skills: string[];
+  availability: string;
+  bio: string;
+}
+
+export interface JobDetail {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  experience_level: string;
+  work_type: string;
+  is_remote: boolean;
+  salary_min: number;
+  salary_max: number;
+  required_skills: string[];
+  description: string;
+}
+
+export interface CompatibilityBreakdown {
+  habilidades_compatibilidad: {
+    score: string;
+    score_numeric: number;
+    weight: string;
+    habilidades_coincidentes: string[];
+    habilidades_faltantes: string[];
+    porcentaje_coincidencia: string;
+    analysis: string;
+  };
+  salario_compatibilidad: {
+    score: string;
+    score_numeric: number;
+    weight: string;
+    jobseeker_range: string;
+    job_range: string;
+    overlap: string;
+    analysis: string;
+  };
+  ubicacion_compatibilidad: {
+    score: string;
+    score_numeric: number;
+    weight: string;
+    jobseeker_location: string;
+    job_location: string;
+    is_remote: boolean;
+    tipo_compatibilidad: string;
+    analysis: string;
+  };
+  experiencia_compatibilidad: {
+    score: string;
+    score_numeric: number;
+    weight: string;
+    jobseeker_experience: string;
+    required_level: string;
+    is_sufficient: boolean;
+    analysis: string;
+  };
+  disponibilidad_compatibilidad: {
+    score: string;
+    score_numeric: number;
+    weight: string;
+    jobseeker_availability: string;
+    job_type: string;
+    tipo_compatibilidad: string;
+    analysis: string;
+  };
+}
+
+export interface CompatibilityAnalysis {
+  overall_score: string;
+  overall_score_numeric: number;
+  nivel_compatibilidad: string;
+  recommendation: string;
+  breakdown: CompatibilityBreakdown;
+}
+
+export interface MatchDetailsSummary {
+  strengths: string[];
+  gaps: string[];
+  recommendation_text: string;
+}
+
+export interface GeminiMatchDetailsResponse {
+  jobseeker: JobSeekerDetail;
+  job: JobDetail;
+  compatibility_analysis: CompatibilityAnalysis;
+  summary: MatchDetailsSummary;
+  generated_at: string;
+}
+
+export async function getGeminiMatchDetails(jobseekerId: string, jobId: string): Promise<GeminiMatchDetailsResponse> {
+  try {
+    const response = await mlAxios.get<GeminiMatchDetailsResponse>(
+      `recommendation/match-details-gemini/${jobseekerId}/${jobId}`
+    );
+    console.log("Gemini Match Details:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching gemini match details:", error);
+    throw error;
+  }
+}

@@ -6,7 +6,8 @@ import { useJobPostingStore } from "@/stores/jobposting.store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, CheckCircle, XCircle, Building2, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { AlertCircle, CheckCircle, XCircle, Building2, Zap, TrendingUp } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { JobPostingResponse } from "@/services/types/responses";
 
@@ -19,7 +20,7 @@ interface JobPostingUI {
 
 export function MatchDetails() {
   const { jobSeeker } = useJobSeekerStore();
-  const { matchDetails, loading, error, fetchMatchDetails } = useML();
+  const { geminiMatchDetails, loading, error, fetchGeminiMatchDetails } = useML();
   const { fetchJobPostings } = useJobPostingList();
   const { jobPostings } = useJobPostingStore();
 
@@ -34,7 +35,7 @@ export function MatchDetails() {
     const loadAllJobs = async () => {
       setIsLoadingJobs(true);
       try {
-        await fetchJobPostings(1000, 0); // Cargar un número grande de ofertas
+        await fetchJobPostings(1000, 0);
       } catch (err) {
         console.error("Error loading job postings:", err);
       } finally {
@@ -53,7 +54,7 @@ export function MatchDetails() {
         jobPostings.map((job: JobPostingResponse) => ({
           id: job.id,
           title: job.title,
-          company: "Empresa", // JobPostingResponse no incluye company
+          company: "Empresa",
           description: job.description,
         }))
       );
@@ -63,7 +64,7 @@ export function MatchDetails() {
   // Fetch match details cuando se selecciona un trabajo
   useEffect(() => {
     if (selectedJobId && jobSeeker?.id && isSheetOpen) {
-      fetchMatchDetails(jobSeeker.id, selectedJobId);
+      fetchGeminiMatchDetails(jobSeeker.id, selectedJobId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJobId, isSheetOpen]);
@@ -79,11 +80,29 @@ export function MatchDetails() {
       job.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getCompatibilityColor = (score: number) => {
+    if (score >= 70) return "text-green-400";
+    if (score >= 50) return "text-yellow-400";
+    return "text-orange-400";
+  };
+
+  const getCompatibilityBg = (score: number) => {
+    if (score >= 70) return "bg-green-900/30 border-green-700";
+    if (score >= 50) return "bg-yellow-900/30 border-yellow-700";
+    return "bg-orange-900/30 border-orange-700";
+  };
+
+  const getScoreEmoji = (score: number) => {
+    if (score >= 70) return "🟢";
+    if (score >= 50) return "🟡";
+    return "🔴";
+  };
+
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Ofertas Laborales Disponibles</h2>
-        <p className="text-sm text-gray-600 mb-4">Analiza tu compatibilidad con cualquier oferta laboral disponible</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Ofertas Laborales Disponibles</h2>
+        <p className="text-sm text-gray-300 mb-4">Analiza tu compatibilidad con cualquier oferta laboral disponible</p>
       </div>
 
       {/* Buscador */}
@@ -93,7 +112,7 @@ export function MatchDetails() {
           placeholder="Buscar por título o empresa..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -101,13 +120,13 @@ export function MatchDetails() {
       {isLoadingJobs ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-48 w-full" />
+            <Skeleton key={i} className="h-48 w-full bg-gray-800" />
           ))}
         </div>
       ) : filteredJobs.length === 0 ? (
-        <Card>
+        <Card className="bg-gray-900 border-gray-800">
           <CardContent className="pt-6">
-            <p className="text-center text-gray-500">
+            <p className="text-center text-gray-400">
               {allJobs.length === 0
                 ? "No hay ofertas disponibles"
                 : "No se encontraron ofertas que coincidan con la búsqueda"}
@@ -117,19 +136,19 @@ export function MatchDetails() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredJobs.map((job) => (
-            <Card key={job.id} className="hover:shadow-lg transition-shadow">
+            <Card key={job.id} className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800 hover:border-blue-700">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg line-clamp-2">{job.title}</CardTitle>
-                <p className="text-sm text-gray-600 flex items-center gap-1 mt-2">
+                <CardTitle className="text-lg line-clamp-2 text-white">{job.title}</CardTitle>
+                <p className="text-sm text-gray-400 flex items-center gap-1 mt-2">
                   <Building2 className="h-4 w-4" />
                   {job.company}
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
-                {job.description && <p className="text-sm text-gray-600 line-clamp-3">{job.description}</p>}
+                {job.description && <p className="text-sm text-gray-300 line-clamp-3">{job.description}</p>}
                 <Button
                   onClick={() => handleAnalyzeCompatibility(job.id)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 font-semibold"
                   size="sm"
                 >
                   <Zap className="h-4 w-4" />
@@ -143,61 +162,165 @@ export function MatchDetails() {
 
       {/* Sheet de Detalles de Compatibilidad */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="max-w-2xl overflow-y-auto">
+        <SheetContent className="max-w-3xl overflow-y-auto bg-gray-900 border-gray-800 text-white">
           <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-blue-600" />
+            <SheetTitle className="flex items-center gap-2 text-white">
+              <TrendingUp className="h-5 w-5 text-blue-400" />
               Análisis de Compatibilidad
             </SheetTitle>
           </SheetHeader>
 
           <div className="mt-6 space-y-4">
-            {loading && !matchDetails ? (
+            {loading && !geminiMatchDetails ? (
               <>
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <Skeleton key={i} className="h-20 w-full" />
+                  <Skeleton key={i} className="h-20 w-full bg-gray-800" />
                 ))}
               </>
             ) : error ? (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-red-600" />
-                <p className="text-red-700">{error}</p>
+              <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-red-400" />
+                <p className="text-red-300">{error}</p>
               </div>
-            ) : matchDetails ? (
+            ) : geminiMatchDetails ? (
               <>
-                <div>
-                  <h3 className="font-semibold text-lg">{matchDetails.job_title}</h3>
-                  <p className="text-sm text-gray-600">{matchDetails.company}</p>
+                {/* Job Info */}
+                <div className="space-y-2 pb-4 border-b border-gray-700">
+                  <h3 className="font-bold text-xl text-white">{geminiMatchDetails.job.title}</h3>
+                  <p className="text-sm text-gray-400">{geminiMatchDetails.job.company}</p>
+                  <p className="text-sm text-gray-400">{geminiMatchDetails.job.description}</p>
                 </div>
 
-                {/* Score General */}
-                <div className="bg-linear-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
-                  <p className="text-sm text-gray-600 mb-2">Compatibilidad General</p>
-                  <div className="flex items-end gap-3">
-                    <div className="text-4xl font-bold text-green-600">
-                      {(matchDetails.match_score * 100).toFixed(0)}%
+                {/* Overall Score */}
+                <div className={`p-4 rounded-lg border ${getCompatibilityBg(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}`}>
+                  <p className="text-sm text-gray-300 mb-3">Compatibilidad General</p>
+                  <div className="flex items-end gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className={`text-5xl font-bold ${getCompatibilityColor(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}`}>
+                        {geminiMatchDetails.compatibility_analysis.overall_score}
+                      </div>
+                      <div className="text-3xl">{getScoreEmoji(geminiMatchDetails.compatibility_analysis.overall_score_numeric)}</div>
                     </div>
-                    <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
-                      <div
-                        className="bg-linear-to-r from-green-400 to-green-600 h-3 rounded-full transition-all"
-                        style={{ width: `${matchDetails.match_score * 100}%` }}
-                      />
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-300 mb-2">{geminiMatchDetails.compatibility_analysis.nivel_compatibilidad}</p>
+                      <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                        <div
+                          className={`h-3 rounded-full transition-all ${
+                            geminiMatchDetails.compatibility_analysis.overall_score_numeric >= 70
+                              ? "bg-gradient-to-r from-green-400 to-green-600"
+                              : geminiMatchDetails.compatibility_analysis.overall_score_numeric >= 50
+                                ? "bg-gradient-to-r from-yellow-400 to-yellow-600"
+                                : "bg-gradient-to-r from-orange-400 to-orange-600"
+                          }`}
+                          style={{ width: `${geminiMatchDetails.compatibility_analysis.overall_score_numeric}%` }}
+                        />
+                      </div>
                     </div>
+                  </div>
+                  <p className="text-sm text-gray-300 mt-3 flex items-start gap-2">
+                    <span>{geminiMatchDetails.compatibility_analysis.recommendation}</span>
+                  </p>
+                </div>
+
+                {/* Breakdown by Category */}
+                <div className="space-y-3">
+                  {/* Skills */}
+                  <CompatibilityItem
+                    label="Habilidades"
+                    score={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.score_numeric}
+                    weight={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.weight}
+                    analysis={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.analysis}
+                    matches={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.habilidades_coincidentes}
+                    gaps={geminiMatchDetails.compatibility_analysis.breakdown.habilidades_compatibilidad.habilidades_faltantes}
+                  />
+
+                  {/* Salary */}
+                  <CompatibilityItem
+                    label="Rango Salarial"
+                    score={geminiMatchDetails.compatibility_analysis.breakdown.salario_compatibilidad.score_numeric}
+                    weight={geminiMatchDetails.compatibility_analysis.breakdown.salario_compatibilidad.weight}
+                    analysis={geminiMatchDetails.compatibility_analysis.breakdown.salario_compatibilidad.analysis}
+                    additionalInfo={`Esperado: ${geminiMatchDetails.compatibility_analysis.breakdown.salario_compatibilidad.jobseeker_range} | Oferta: ${geminiMatchDetails.compatibility_analysis.breakdown.salario_compatibilidad.job_range}`}
+                  />
+
+                  {/* Location */}
+                  <CompatibilityItem
+                    label="Ubicación"
+                    score={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.score_numeric}
+                    weight={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.weight}
+                    analysis={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.analysis}
+                    additionalInfo={geminiMatchDetails.compatibility_analysis.breakdown.ubicacion_compatibilidad.tipo_compatibilidad}
+                  />
+
+                  {/* Experience */}
+                  <CompatibilityItem
+                    label="Experiencia"
+                    score={geminiMatchDetails.compatibility_analysis.breakdown.experiencia_compatibilidad.score_numeric}
+                    weight={geminiMatchDetails.compatibility_analysis.breakdown.experiencia_compatibilidad.weight}
+                    analysis={geminiMatchDetails.compatibility_analysis.breakdown.experiencia_compatibilidad.analysis}
+                    additionalInfo={`Tu: ${geminiMatchDetails.compatibility_analysis.breakdown.experiencia_compatibilidad.jobseeker_experience} | Requerido: ${geminiMatchDetails.compatibility_analysis.breakdown.experiencia_compatibilidad.required_level}`}
+                  />
+
+                  {/* Availability */}
+                  <CompatibilityItem
+                    label="Disponibilidad"
+                    score={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.score_numeric}
+                    weight={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.weight}
+                    analysis={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.analysis}
+                    additionalInfo={geminiMatchDetails.compatibility_analysis.breakdown.disponibilidad_compatibilidad.tipo_compatibilidad}
+                  />
+                </div>
+
+                {/* Summary */}
+                <div className="space-y-4 pt-4 border-t border-gray-700">
+                  {geminiMatchDetails.summary.strengths.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-green-400 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        Fortalezas
+                      </h4>
+                      <ul className="space-y-1">
+                        {geminiMatchDetails.summary.strengths.map((strength, idx) => (
+                          <li key={idx} className="text-sm text-gray-300 flex items-start gap-2">
+                            <span className="text-green-400 flex-shrink-0 mt-0.5">✓</span>
+                            {strength}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {geminiMatchDetails.summary.gaps.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-orange-400 flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4" />
+                        Brechas
+                      </h4>
+                      <ul className="space-y-1">
+                        {geminiMatchDetails.summary.gaps.map((gap, idx) => (
+                          <li key={idx} className="text-sm text-gray-300 flex items-start gap-2">
+                            <span className="text-orange-400 flex-shrink-0 mt-0.5">⚠</span>
+                            {gap}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-3 mt-3">
+                    <p className="text-sm text-blue-300">
+                      <span className="font-semibold">Recomendación: </span>
+                      {geminiMatchDetails.summary.recommendation_text}
+                    </p>
                   </div>
                 </div>
 
-                {/* Detalles */}
-                <div className="space-y-3">
-                  <DetailItem label="Skills" value={matchDetails.skill_match} icon="check" />
-                  <DetailItem label="Rango Salarial" value={matchDetails.salary_compatibility} icon="check" />
-                  <DetailItem label="Experiencia" value={matchDetails.experience_match} icon="check" />
-                  <DetailItem label="Ubicación" value={matchDetails.location_match} icon="check" />
-                </div>
-
-                <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700">Aplicar a este trabajo</Button>
+                <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+                  Aplicar a este trabajo
+                </Button>
               </>
             ) : (
-              <p className="text-center text-gray-500 py-8">Cargando análisis de compatibilidad...</p>
+              <p className="text-center text-gray-400 py-8">Cargando análisis de compatibilidad...</p>
             )}
           </div>
         </SheetContent>
@@ -206,23 +329,59 @@ export function MatchDetails() {
   );
 }
 
-interface DetailItemProps {
+interface CompatibilityItemProps {
   label: string;
-  value: string;
-  icon?: "check" | "warning" | "error";
+  score: number;
+  weight: string;
+  analysis: string;
+  matches?: string[];
+  gaps?: string[];
+  additionalInfo?: string;
 }
 
-function DetailItem({ label, value, icon = "check" }: DetailItemProps) {
-  const IconComponent = icon === "check" ? CheckCircle : icon === "warning" ? AlertCircle : XCircle;
-  const colorClass = icon === "check" ? "text-green-600" : icon === "warning" ? "text-yellow-600" : "text-red-600";
+function CompatibilityItem({ label, score, weight, analysis, matches, gaps, additionalInfo }: CompatibilityItemProps) {
+  const scoreColor = score >= 70 ? "text-green-400" : score >= 50 ? "text-yellow-400" : "text-orange-400";
+  const bgColor = score >= 70 ? "bg-green-900/20 border-green-700" : score >= 50 ? "bg-yellow-900/20 border-yellow-700" : "bg-orange-900/20 border-orange-700";
 
   return (
-    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-      <IconComponent className={`h-5 w-5 mt-0.5 shrink-0 ${colorClass}`} />
-      <div className="flex-1">
-        <p className="text-sm font-medium text-gray-900">{label}</p>
-        <p className="text-sm text-gray-600">{value}</p>
+    <div className={`p-3 rounded-lg border ${bgColor}`}>
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <p className="font-semibold text-white">{label}</p>
+          <p className="text-xs text-gray-400">{weight}</p>
+        </div>
+        <div className={`text-2xl font-bold ${scoreColor}`}>{score}%</div>
       </div>
+
+      <p className="text-sm text-gray-300 mb-2">{analysis}</p>
+
+      {additionalInfo && <p className="text-xs text-gray-400 mb-2">{additionalInfo}</p>}
+
+      {matches && matches.length > 0 && (
+        <div className="mb-2">
+          <p className="text-xs text-green-400 font-semibold mb-1">Coincidencias:</p>
+          <div className="flex flex-wrap gap-1">
+            {matches.map((match, idx) => (
+              <Badge key={idx} className="bg-green-900 text-green-300 border-green-700 border text-xs">
+                {match}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {gaps && gaps.length > 0 && (
+        <div>
+          <p className="text-xs text-orange-400 font-semibold mb-1">Faltantes:</p>
+          <div className="flex flex-wrap gap-1">
+            {gaps.map((gap, idx) => (
+              <Badge key={idx} className="bg-orange-900 text-orange-300 border-orange-700 border text-xs">
+                {gap}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

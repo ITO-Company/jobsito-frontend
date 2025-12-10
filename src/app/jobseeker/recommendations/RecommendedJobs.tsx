@@ -138,9 +138,7 @@ export function RecommendedJobs() {
         {geminiRecommendations.summary && (
           <Card className="bg-gradient-to-r from-blue-900 to-indigo-900 border-blue-700">
             <CardContent className="pt-4">
-              <p className="text-sm text-gray-100 leading-relaxed">
-                {geminiRecommendations.summary}
-              </p>
+              <p className="text-sm text-gray-100 leading-relaxed">{geminiRecommendations.summary}</p>
             </CardContent>
           </Card>
         )}
@@ -210,7 +208,9 @@ export function RecommendedJobs() {
                   </div>
                   <div className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4 text-green-500" />
-                    <span className="text-gray-200 font-medium">{getSalaryDisplay(job.details.salary_min, job.details.salary_max)}</span>
+                    <span className="text-gray-200 font-medium">
+                      {getSalaryDisplay(job.details.salary_min, job.details.salary_max)}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Zap className="h-4 w-4 text-yellow-500" />
@@ -331,7 +331,11 @@ export function RecommendedJobs() {
                   <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 font-semibold text-white">
                     Ver Oferta Completa
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1 border-gray-600 text-gray-200 hover:bg-gray-800">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 border-gray-600 text-gray-200 hover:bg-gray-800"
+                  >
                     Guardar
                   </Button>
                 </div>
